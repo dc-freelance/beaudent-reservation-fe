@@ -1,8 +1,9 @@
-import React from 'react'
+import React from 'react';
+import { Routes, Router, Route } from 'react-router-dom';
 
 const App = () => {
   return (
-    <div>!!Lets Go Beudent!!</div>
+    <div>Setup Ready</div>
   );
 };
 
