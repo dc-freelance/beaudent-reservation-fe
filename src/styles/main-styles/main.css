@@ -25,9 +25,7 @@
     margin: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
-
     font-family: poppins;
-    font-family: noto;
     user-select: none;
 }
 
@@ -163,7 +161,6 @@ button {
     transform: translateY(8px);
 }
 
-
 .form-button.on {
     background: var(--theme);
     color: rgb(255, 255, 255);
@@ -199,15 +196,13 @@ button {
     overflow-y: scroll;
 
     header {
-      
         position: relative;
-      
+
         h2 {
             font-weight: 500;
             font-size: 24px;
             color: rgb(70, 70, 70);
         }
-
 
         p {
             margin: 3px 0 72px;
@@ -222,7 +217,6 @@ button {
             height: 100px;
             object-fit: contain;
         }
-
     }
 
     .progress {
@@ -305,7 +299,6 @@ button {
 
 /* End of Second Type Screen (Form) */
 
-
 /* Start of Third Type Screen (Reservation) */
 
 .section {
@@ -327,6 +320,26 @@ button {
 
 /* End of Third Type Screen (Reservation) */
 
+@media(max-width: 900px) {
+    .form-session {
+        header {
+            h2 {
+                font-size: 24px;
+            }
+
+            p {
+                max-width: 45%;
+                font-size: 14px;
+            }
+
+            img {
+                width: 150px;
+                height: 100px;
+            }
+        }
+    }
+}
+
 @media(max-width: 750px) {
     .logo img {
         width: 200px;
@@ -347,6 +360,19 @@ button {
 
     button {
         font-size: 14px !important;
+    }
+}
+
+@media(max-width: 550px) {
+    .form-session {
+        header.reservation {
+            margin-top: 100px;
+
+            img {
+                top: -110px;
+                left: -24px;
+            }
+        }
     }
 }
 
