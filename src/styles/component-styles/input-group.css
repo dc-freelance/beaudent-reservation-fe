@@ -5,8 +5,9 @@
     label {
         display: block;
         margin-bottom: 8px;
-        font-weight: 600;
+        font-family: poppins-medium;
         font-size: 14px;
+        color: rgb(100, 100, 100);
     }
 
     input,

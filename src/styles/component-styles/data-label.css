@@ -1,0 +1,10 @@
+.data-label {
+    flex: 1;
+    min-width: 300px;
+
+    label {
+        font-family: poppins-bold;
+        font-size: 14px;
+        color: rgb(70, 70, 70);
+    }
+}
