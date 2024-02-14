@@ -1,7 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import OptionBox from '../components/OptionBox';
 
 const Index = () => {
+    const navigate = useNavigate();
+
     return (
         <div className='page'>
             <div className='semantic-bg top'></div>
@@ -14,7 +18,9 @@ const Index = () => {
                     <div className='content'>
                         <p className='question'>Sudah pernah reservasi di Beaudent?</p>
                         <div className='option-group'>
-                            <OptionBox img={require('../assets/images/new-patient-images.png')} value='Belum Pernah' />
+                            <button onClick={() => navigate('/services')} className='box-option-btn'>
+                                <OptionBox img={require('../assets/images/new-patient-images.png')} value='Belum Pernah' />
+                            </button>
                             <OptionBox img={require('../assets/images/member-images.png')} value='Sudah Pernah' />
                         </div>
                     </div>

@@ -90,6 +90,12 @@
     gap: 24px;
 }
 
+.box-option-btn {
+    background: none;
+    outline: none;
+    border: none;
+}
+
 @media(max-width: 750px) {
     .logo img {
         width: 200px;
