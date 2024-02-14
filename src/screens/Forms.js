@@ -166,7 +166,7 @@ const Forms = () => {
                                 </div>
                             </header>
                             :
-                            <header>
+                            <header className='reservation'>
                                 <h2 className='form-title'>{title}</h2>
                                 <p>Mohon periksa kembali data formulir reservasi anda</p>
                                 <img src={require('../assets/images/logo.jpg')} alt='Beaudent Logo' draggable='false' />
