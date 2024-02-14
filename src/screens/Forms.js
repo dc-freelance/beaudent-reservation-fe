@@ -10,6 +10,31 @@ const Forms = () => {
     const [title, setTitle] = useState('Daftarkan Diri Anda');
     const [inputInfo, setInputInfo] = useState('*Pisahkan tempat dan tanggal kelahiran dengan tanda koma');
 
+    //Static options for select
+
+    const religion = [
+        { label: 'Islam', value: 'islam' },
+        { label: 'Kristen Protestan', value: 'kristen protestan' },
+        { label: 'Katolik', value: 'katolik' },
+        { label: 'Hindu', value: 'hindu' },
+        { label: 'Buddha', value: 'buddha' },
+        { label: 'Konghucu', value: 'konghucu' }
+    ];
+
+    const gender = [
+        { label: 'Laki-laki', value: 'laki-laki' },
+        { label: 'Perempuan', value: 'perempuan' }
+    ];
+
+    const maritalStatus = [
+        { label: 'Belum Menikah', value: 'belum menikah' },
+        { label: 'Menikah', value: 'menikah' },
+        { label: 'Cerai Hidup', value: 'cerai hidup' },
+        { label: 'Cerai Mati', value: 'cerai mati' },
+        { label: 'Janda/Duda', value: 'janda/duda' }
+    ];
+
+
     useEffect(() => {
 
         // Setting Title and Message
@@ -38,9 +63,9 @@ const Forms = () => {
                 <InputGroup name='Nomor Identitas' type='number' placeholder='Nomor Kartu Identitas' />
                 <InputGroup name='Nama' type='text' placeholder='Masukkan Nama Anda' />
                 <InputGroup name='Tempat Tanggal lahir' type='text' placeholder='Contoh: Kota, 26-12-2000' mark='*' />
-                <InputGroup name='Jenis Kelamin' type='text' placeholder='Pilih Jenis Kelamin' />
-                <InputGroup name='Agama' type='text' placeholder='Pilih Agama' />
-                <InputGroup name='Status Pernikahan' type='text' placeholder='Pilih Status Pernikahan' />
+                <InputGroup name='Jenis Kelamin' type='select' placeholder='Pilih Jenis Kelamin' options={gender} />
+                <InputGroup name='Agama' type='select' placeholder='Pilih Agama' options={religion} />
+                <InputGroup name='Status Pernikahan' type='select' placeholder='Pilih Status Pernikahan' options={maritalStatus} />
             </div>
         );
     };

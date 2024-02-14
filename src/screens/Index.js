@@ -19,10 +19,10 @@ const Index = () => {
                         <p className='question'>Sudah pernah reservasi di Beaudent?</p>
                         <div className='option-group'>
                             <button onClick={() => navigate('/services')} className='box-option-btn'>
-                                <OptionBox img={require('../assets/images/new-patient-images.png')} value='Belum Pernah' />
+                                <OptionBox img={require('../assets/images/new-patient-images.png')} value='Belum Pernah' alt='Belum Pernah' />
                             </button>
                             <button onClick={() => navigate('/credential')} className='box-option-btn'>
-                                <OptionBox img={require('../assets/images/member-images.png')} value='Sudah Pernah' />
+                                <OptionBox img={require('../assets/images/member-images.png')} value='Sudah Pernah' alt='Sudah Pernah' />
                             </button>
                         </div>
                     </div>

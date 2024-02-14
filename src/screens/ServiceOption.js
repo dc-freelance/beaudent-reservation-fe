@@ -19,10 +19,10 @@ const ServiceOption = () => {
                         <p className='question'>Apa yang bisa kami bantu untuk anda?</p>
                         <div className='option-group'>
                             <button onClick={() => navigate('/reservation')} className='box-option-btn'>
-                                <OptionBox img={require('../assets/images/examination-images.png')} value='Perawatan' />
+                                <OptionBox img={require('../assets/images/examination-images.png')} value='Perawatan' alt='Perawatan' />
                             </button>
                             <button onClick={() => navigate('/reservation')} className='box-option-btn'>
-                                <OptionBox img={require('../assets/images/check-up-images.png')} value='Kontrol' />
+                                <OptionBox img={require('../assets/images/check-up-images.png')} value='Kontrol' alt='Kontrol' />
                             </button>
                         </div>
                     </div>

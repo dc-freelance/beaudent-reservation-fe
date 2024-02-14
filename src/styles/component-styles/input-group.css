@@ -27,6 +27,12 @@
         height: calc(100% - 27px);
     }
 
+    .basic-single {
+        width: 100%;
+        min-width: 300px;
+        font-size: 14px;
+    }
+
     input::placeholder {
         font-size: 13px;
         color: rgb(180, 180, 180);
