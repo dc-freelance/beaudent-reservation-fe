@@ -5,11 +5,15 @@ import InputGroup from '../components/InputGroup';
 import OptionBox from '../components/OptionBox';
 import DataLabel from '../components/DataLabel';
 
+import 'boxicons';
+
 const Forms = () => {
     const navigate = useNavigate();
     const [form, setForm] = useState(1);
     const [title, setTitle] = useState('Daftarkan Diri Anda');
     const [inputInfo, setInputInfo] = useState('*Pisahkan tempat dan tanggal kelahiran dengan tanda koma');
+    const [modal, setModal] = useState(0);
+    const [agree, setAgree] = useState(0);
 
     //Static options for select
 
@@ -129,7 +133,7 @@ const Forms = () => {
                     <div className='form-body'>
                         <InputGroup name='Cabang Klinik' type='select' placeholder='Pilih Cabang' options={[{ label: 'Surabaya', value: 'surabaya' }]} />
                         <InputGroup name='Layanan' type='select' placeholder='Pilih Layanan' options={[{ label: 'Tambal Gigi', value: 'tambal gigi' }]} />
-                        <InputGroup name='Waktu Kunjungan' type='datetime' placeholder='Atur Tanggal dan Jam' />
+                        <InputGroup name='Waktu Kunjungan' type='datetime-local' placeholder='Atur Tanggal dan Jam' />
                     </div>
                 </div>
                 <div className='section'>
@@ -194,8 +198,34 @@ const Forms = () => {
                             }}>Kembali</button>
 
                             <button className={`form-button ${form === 4 && 'on'}`} onClick={() => {
-                                form < 4 && setForm((prev) => prev + 1)
+                                form < 4 ? setForm((prev) => prev + 1) : setModal(1)
                             }}>{form === 4 ? 'Konfirmasi' : 'Berikutnya'}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Confirmation Modal */}
+            <div className={`modal ${modal === 1 && 'active'}`}>
+                <div className='pop-up'>
+                    <div className='notif'>
+                        <div className='icon'>
+                            <box-icon type='regular' name='mail-send' size='64px' color='white'></box-icon>
+                        </div>
+                        <p>Kami akan mengirimkan nomor antrian melalui email anda. Mohon pantau email anda secara berkala.</p>
+                    </div>
+                    <div className='card'>
+                        <div className='agreement'>
+                            <div>
+                                <button className={`check-box ${agree === 1 && 'checked'}`} onClick={() => agree === 1 ? setAgree(0) : setAgree(1)}></button>
+                            </div>
+                            <div>
+                                <p>Saya telah membaca dan menyetujui syarat dan ketentuan dari Beaudent</p>
+                            </div>
+                        </div>
+                        <div className='btn-group'>
+                            <button className='form-button' onClick={() => setModal(0)}>Batal</button>
+                            <button className='form-button on'>Kirim</button>
                         </div>
                     </div>
                 </div>

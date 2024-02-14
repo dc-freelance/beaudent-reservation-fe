@@ -37,8 +37,11 @@ button {
 
 :root {
     --theme: rgb(255, 116, 142);
-    --transparent-theme: rgba(219, 38, 157, .1);
-    --secondary-transparent: rgba(201, 75, 3, .01);
+    --transparent-theme: rgba(255, 116, 142, .6);
+    --semantic-theme-1: rgba(219, 38, 157, .1);
+    --semantic-theme-2: rgba(201, 75, 3, .01);
+    --theme-combination: rgb(252, 199, 8);
+    --transparent-theme-combination: rgba(252, 199, 8, .6);
 }
 
 .page {
@@ -54,7 +57,7 @@ button {
     position: absolute;
     width: 60vw;
     height: 60vw;
-    background: radial-gradient(circle, var(--transparent-theme), var(--secondary-transparent), transparent);
+    background: radial-gradient(circle, var(--semantic-theme-1), var(--semantic-theme-2), transparent);
 }
 
 .semantic-bg.top {
@@ -318,6 +321,70 @@ button {
     font-size: 18px;
 }
 
+.modal {
+    position: fixed;
+    display: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+
+    .pop-up {
+        max-width: 500px;
+    }
+
+    .card {
+        padding: 20px 24px;
+        background: rgb(255, 255, 255);
+        box-shadow: 3px 3px 15px rgba(0, 0, 0, .07);
+
+        .agreement {
+            display: flex;
+            flex-wrap: nowrap;
+            font-size: 14px;
+            gap: 12px;
+
+            .check-box {
+                width: 28px;
+                height: 28px;
+                margin-top: 3px;
+                outline: none;
+                border: none;
+                background: rgb(235, 235, 235);
+                border-radius: 3px;
+                cursor: pointer;
+            }
+
+            .check-box.checked {
+                background: rgb(255, 116, 142);
+            }
+        }
+    }
+}
+
+.modal.active {
+    display: flex;
+}
+
+.notif {
+    display: flex;
+    margin-bottom: 8px;
+    padding: 20px 24px;
+    border-radius: 5px;
+    background: linear-gradient(130deg, var(--transparent-theme), var(--transparent-theme-combination));
+    text-align: justify;
+    font-size: 14px;
+    color: rgb(255, 255, 255);
+    gap: 24px;
+
+    p {
+        line-height: 24px;
+    }
+}
+
 /* End of Third Type Screen (Reservation) */
 
 @media(max-width: 900px) {
@@ -378,6 +445,10 @@ button {
             }
         }
     }
+
+    .pop-up {
+        max-width: 85% !important;
+    }
 }
 
 @media(max-width: 500px) {
@@ -394,5 +465,16 @@ button {
 
     .creds-input::placeholder {
         font-size: 12px;
+    }
+
+    .notif {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .pop-up .notif,
+    .pop-up .card .agreement {
+        line-height: 24px;
+        font-size: 13px !important;
     }
 }
