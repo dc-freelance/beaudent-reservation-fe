@@ -195,7 +195,7 @@ const Forms = () => {
 
                             <button className={`form-button ${form === 4 && 'on'}`} onClick={() => {
                                 form < 4 && setForm((prev) => prev + 1)
-                            }}>Berikutnya</button>
+                            }}>{form === 4 ? 'Konfirmasi' : 'Berikutnya'}</button>
                         </div>
                     </div>
                 </div>
