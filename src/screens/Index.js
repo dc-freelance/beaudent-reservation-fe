@@ -21,7 +21,9 @@ const Index = () => {
                             <button onClick={() => navigate('/services')} className='box-option-btn'>
                                 <OptionBox img={require('../assets/images/new-patient-images.png')} value='Belum Pernah' />
                             </button>
-                            <OptionBox img={require('../assets/images/member-images.png')} value='Sudah Pernah' />
+                            <button onClick={() => navigate('/credential')} className='box-option-btn'>
+                                <OptionBox img={require('../assets/images/member-images.png')} value='Sudah Pernah' />
+                            </button>
                         </div>
                     </div>
                 </div>

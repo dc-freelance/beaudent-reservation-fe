@@ -8,6 +8,8 @@ import Index from './screens/Index';
 // Styles Import
 import './styles/main-styles/main.css';
 import ServiceOption from './screens/ServiceOption';
+import Credential from './screens/Credential';
+import Forms from './screens/Forms';
 
 const App = () => {
   return (
@@ -15,6 +17,8 @@ const App = () => {
       <Routes>
         <Route path='/' element={<Index />}></Route>
         <Route path='/services' element={<ServiceOption />}></Route>
+        <Route path='/credential' element={<Credential />}></Route>
+        <Route path='/reservation' element={<Forms />}></Route>
       </Routes>
     </Router>
   );
