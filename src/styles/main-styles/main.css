@@ -10,11 +10,23 @@
     src: url(../../assets/fonts/poppins/Poppins-Regular.ttf);
 }
 
+@font-face {
+    font-family: poppins-medium;
+    src: url(../../assets/fonts/poppins/Poppins-Medium.ttf);
+}
+
+@font-face {
+    font-family: poppins-bold;
+    src: url(../../assets/fonts/poppins/Poppins-Bold.ttf);
+}
+
 * {
     padding: 0;
     margin: 0;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
+
+    font-family: poppins;
     font-family: noto;
     user-select: none;
 }
@@ -151,6 +163,12 @@ button {
     transform: translateY(8px);
 }
 
+
+.form-button.on {
+    background: var(--theme);
+    color: rgb(255, 255, 255);
+}
+
 .btn-group {
     display: flex;
     width: max-content;
@@ -181,11 +199,30 @@ button {
     overflow-y: scroll;
 
     header {
+      
+        position: relative;
+      
         h2 {
             font-weight: 500;
             font-size: 24px;
             color: rgb(70, 70, 70);
         }
+
+
+        p {
+            margin: 3px 0 72px;
+            color: rgb(100, 100, 100);
+        }
+
+        img {
+            position: absolute;
+            top: -16px;
+            right: 0;
+            width: 200px;
+            height: 100px;
+            object-fit: contain;
+        }
+
     }
 
     .progress {
@@ -267,6 +304,28 @@ button {
 }
 
 /* End of Second Type Screen (Form) */
+
+
+/* Start of Third Type Screen (Reservation) */
+
+.section {
+    position: relative;
+    margin-bottom: 64px;
+
+    h3 {
+        margin-bottom: 16px;
+        font-weight: 500;
+        font-size: 20px;
+        color: rgb(70, 70, 70);
+    }
+}
+
+.payment-info p {
+    font-family: poppins-bold;
+    font-size: 18px;
+}
+
+/* End of Third Type Screen (Reservation) */
 
 @media(max-width: 750px) {
     .logo img {
