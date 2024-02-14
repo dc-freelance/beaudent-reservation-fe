@@ -54,6 +54,7 @@ const Forms = () => {
             setInputInfo('');
         };
 
+
         if (form === 4) {
             setTitle('Formulir Reservasi')
         };
@@ -172,6 +173,17 @@ const Forms = () => {
                                 <img src={require('../assets/images/logo.jpg')} alt='Beaudent Logo' draggable='false' />
                             </header>
                     }
+                    <header>
+                        <h2 className='form-title'>{title}</h2>
+
+                        {/* Form step progress */}
+                        <div className='progress'>
+                            <div className={`point ${form > 0 && 'reached'}`}></div>
+                            <div className={`point ${form > 1 && 'reached'}`}></div>
+                            <div className={`point ${form > 2 && 'reached'}`}></div>
+                            <div className={`line ${form === 1 && 'first'} ${form === 2 && 'second'} ${form === 3 && 'third'}`}></div>
+                        </div>
+                    </header>
 
                     {/* Template for the each form */}
                     {form === 1 && <Profile />}
@@ -188,6 +200,9 @@ const Forms = () => {
                                 <p>BCA : 3500120201020 (Beaudent)</p>
                             </div>
                         }
+
+                    <div className='form-footer'>
+                        <p>{inputInfo}</p>
                         <div className='btn-group'>
                             <button className='form-button' onClick={() => {
                                 form > 1 ? setForm((prev) => prev - 1) : navigate('/services')
@@ -195,6 +210,9 @@ const Forms = () => {
 
                             <button className={`form-button ${form === 4 && 'on'}`} onClick={() => {
                                 form < 4 && setForm((prev) => prev + 1)
+
+                            <button className='form-button' onClick={() => {
+                                form < 3 && setForm((prev) => prev + 1)
                             }}>Berikutnya</button>
                         </div>
                     </div>
