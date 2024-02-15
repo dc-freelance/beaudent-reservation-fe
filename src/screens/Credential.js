@@ -17,7 +17,11 @@ const Credential = () => {
                     <div className='content creds'>
                         <p className='question'>Nomor Whatsapp atau Email Anda</p>
                         <input className='creds-input' placeholder='example@gmail.com' autoComplete='off' />
-                        <button className='form-button' onClick={() => navigate('/services')}>Lanjutkan</button>
+                        <button className='form-button' onClick={() => navigate('/services', {
+                            state: {
+                                member: true
+                            }
+                        })}>Lanjutkan</button>
                     </div>
                 </div>
             </div>

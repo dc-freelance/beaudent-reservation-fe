@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import InputGroup from '../components/InputGroup';
 import OptionBox from '../components/OptionBox';
@@ -9,13 +9,35 @@ import 'boxicons';
 
 const Forms = () => {
     const navigate = useNavigate();
+
+    // Examination or Check Up
+
+    const { state } = useLocation();
+    const [exam, setExam] = useState(0);
+    const [login, setLogin] = useState(false);
+
+    const checkService = () => {
+        if (state) {
+            const { examination } = state;
+            setExam(examination);
+
+            const { member } = state;
+            member === true && setForm(4);
+            setLogin(member);
+        } else {
+            navigate('/services');
+        };
+    };
+
+    // Text for each form
+
     const [form, setForm] = useState(1);
     const [title, setTitle] = useState('Daftarkan Diri Anda');
     const [inputInfo, setInputInfo] = useState('*Pisahkan tempat dan tanggal kelahiran dengan tanda koma');
     const [modal, setModal] = useState(0);
     const [agree, setAgree] = useState(0);
 
-    //Static options for select
+    // Static options for select
 
     const religion = [
         { label: 'Islam', value: 'islam' },
@@ -41,8 +63,10 @@ const Forms = () => {
 
 
     useEffect(() => {
+        checkService();
 
         // Setting Title and Message
+
         if (form === 1) {
             setTitle('Daftarkan Diri Anda')
             setInputInfo('*Pisahkan tempat dan tanggal kelahiran dengan tanda koma');
@@ -136,16 +160,19 @@ const Forms = () => {
                         <InputGroup name='Waktu Kunjungan' type='datetime-local' placeholder='Atur Tanggal dan Jam' />
                     </div>
                 </div>
-                <div className='section'>
-                    <h3>Pembayaran Deposit</h3>
-                    <div className='form-body'>
-                        <InputGroup name='Bank Pengirim' type='select' placeholder='Pilih Bank' options={[{ label: 'BRI', value: 'bri' }]} />
-                        <InputGroup name='Nama Rekening' type='text' placeholder='Nama Rekening Bank' />
-                        <InputGroup name='Jumlah Deposit' type='number' placeholder='Rp' />
-                        <InputGroup name='Tanggal Pembayaran' type='date' placeholder='Atur Tanggal' />
-                        <InputGroup name='Bukti Pembayaran' type='file' placeholder='Unggah Bukti' />
+                {
+                    exam === 2 &&
+                    <div className='section'>
+                        <h3>Pembayaran Deposit</h3>
+                        <div className='form-body'>
+                            <InputGroup name='Bank Pengirim' type='select' placeholder='Pilih Bank' options={[{ label: 'BRI', value: 'bri' }]} />
+                            <InputGroup name='Nama Rekening' type='text' placeholder='Nama Rekening Bank' />
+                            <InputGroup name='Jumlah Deposit' type='number' placeholder='Rp' />
+                            <InputGroup name='Tanggal Pembayaran' type='date' placeholder='Atur Tanggal' />
+                            <InputGroup name='Bukti Pembayaran' type='file' placeholder='Unggah Bukti' />
+                        </div>
                     </div>
-                </div>
+                }
             </div>
         );
     };
@@ -185,6 +212,8 @@ const Forms = () => {
 
                     <div className='form-footer'>
                         <p>{inputInfo}</p>
+
+                        {/* For reservation form only */}
                         {
                             form === 4 &&
                             <div className='payment-info'>
@@ -193,9 +222,20 @@ const Forms = () => {
                             </div>
                         }
                         <div className='btn-group'>
-                            <button className='form-button' onClick={() => {
-                                form > 1 ? setForm((prev) => prev - 1) : navigate('/services')
-                            }}>Kembali</button>
+                            {
+                                login === true ?
+                                    <button className='form-button' onClick={() => {
+                                        navigate('/services', {
+                                            state: {
+                                                member: login
+                                            }
+                                        })
+                                    }}>Kembali</button>
+                                    :
+                                    <button className='form-button' onClick={() => {
+                                        form > 1 ? setForm((prev) => prev - 1) : navigate('/services')
+                                    }}>Kembali</button>
+                            }
 
                             <button className={`form-button ${form === 4 && 'on'}`} onClick={() => {
                                 form < 4 ? setForm((prev) => prev + 1) : setModal(1)
