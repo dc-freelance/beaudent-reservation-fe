@@ -439,7 +439,7 @@ button {
                 top: -110px;
                 left: -24px;
             }
-          
+
             p {
                 max-width: 100%;
             }
@@ -466,7 +466,6 @@ button {
     .creds-input::placeholder {
         font-size: 12px;
     }
-<<<<<<< HEAD
 
     .notif {
         flex-direction: column;
@@ -479,6 +478,3 @@ button {
         font-size: 13px !important;
     }
 }
-=======
-}
->>>>>>> d0a21de5e1401dfae22c778b0f55fa2f92454908
