@@ -278,7 +278,7 @@ button {
 .form-body {
     display: flex;
     flex-wrap: wrap;
-    gap: 48px;
+    gap: 24px 48px;
 }
 
 .form-footer {
@@ -293,11 +293,41 @@ button {
     display: flex;
     flex-wrap: wrap;
     flex: 1;
-    gap: 48px;
+    gap: 24px 48px;
 }
 
 .form-body .form-col:first-child {
     flex: 2;
+}
+
+.double-input {
+    position: relative;
+    display: flex;
+    flex: 1;
+    margin-bottom: 24px;
+    min-width: 300px;
+    gap: 8px;
+
+    input {
+        min-width: 0 !important;
+    }
+
+    label {
+        position: absolute;
+        width: max-content;
+    }
+
+    .input-group:nth-child(1) {
+        position: static;
+    }
+
+    .input-group:nth-child(1) input {
+        transform: translateY(29px);
+    }
+
+    .input-group:nth-child(2) input {
+        transform: translateY(26.5px);
+    }
 }
 
 /* End of Second Type Screen (Form) */
@@ -477,4 +507,9 @@ button {
         line-height: 24px;
         font-size: 13px !important;
     }
+
+    .double-input {
+        min-width: 275px !important;
+    }
+
 }
