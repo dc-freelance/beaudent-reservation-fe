@@ -378,9 +378,12 @@ button {
             gap: 12px;
 
             .check-box {
+                display: flex;
                 width: 28px;
                 height: 28px;
                 margin-top: 3px;
+                justify-content: center;
+                align-items: center;
                 outline: none;
                 border: none;
                 background: rgb(235, 235, 235);
@@ -390,6 +393,15 @@ button {
 
             .check-box.checked {
                 background: rgb(255, 116, 142);
+            }
+
+            .check-box box-icon {
+                display: none;
+                transform: translateY(-1px);
+            }
+
+            .check-box.checked box-icon {
+                display: block;
             }
         }
     }
@@ -413,6 +425,19 @@ button {
     p {
         line-height: 24px;
     }
+}
+
+.error-container {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+}
+
+.remove-error-button {
+    background: none;
+    outline: none;
+    border: none;
+    display: block;
 }
 
 /* End of Third Type Screen (Reservation) */

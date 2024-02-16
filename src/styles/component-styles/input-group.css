@@ -48,4 +48,12 @@
     input {
         min-width: 275px !important;
     }
+
+    .basic-single {
+        min-width: 275px !important;
+    }
+
+    .basic-single input {
+        min-width: 250px !important;
+    }
 }
