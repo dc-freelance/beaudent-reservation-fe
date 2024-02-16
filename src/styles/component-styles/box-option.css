@@ -19,7 +19,8 @@
     }
 }
 
-.box-option:hover {
+.box-option:hover,
+.box-option.active {
     border: 2px solid rgb(255, 116, 142);
     transform: translateY(12px);
 }

@@ -36,6 +36,10 @@ const InputGroup = (props) => {
         })
     };
 
+    const handleSelect = (selectedOption) => {
+        props.set([selectedOption ? props.options.indexOf(selectedOption) : null, selectedOption ? selectedOption.value : null]);
+    };
+
     return (
         <div className='input-group'>
             <label>{props.name}{props.mark}</label>
@@ -44,18 +48,32 @@ const InputGroup = (props) => {
                 <Select
                     className='basic-single'
                     classNamePrefix='select'
-                    isSearchable='true'
-                    name={props.key}
+                    isSearchable={true}
+                    name={props.name}
                     options={props.options}
                     placeholder={props.placeholder}
                     noOptionsMessage={() => 'Opsi Tidak Ditemukan'}
-                    styles={selectThemes} />
+                    styles={selectThemes}
+                    defaultValue={props.options[props.index]}
+                    onChange={handleSelect}
+                />
+
             }
             {
-                props.type === 'textarea' && <textarea></textarea>
+                props.type === 'textarea' &&
+                <textarea
+                    onChange={event => props.set(event.target.value)}
+                    defaultValue={props.value}
+                ></textarea>
             }
             {
-                props.type !== 'select' && props.type !== 'textarea' && <input type={props.type} placeholder={props.placeholder} />
+                props.type !== 'select' && props.type !== 'textarea' &&
+                <input
+                    type={props.type}
+                    placeholder={props.placeholder}
+                    defaultValue={props.value}
+                    onChange={event => props.set(event.target.value)}
+                />
             }
         </div>
     );

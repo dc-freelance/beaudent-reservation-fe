@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import InputGroup from '../components/InputGroup';
 import OptionBox from '../components/OptionBox';
@@ -9,43 +9,101 @@ import 'boxicons';
 
 const Forms = () => {
     const navigate = useNavigate();
+
+    // Examination or Check Up
+
+    const { state } = useLocation();
+    const [exam, setExam] = useState(0);
+    const [login, setLogin] = useState(false);
+
+    const checkService = () => {
+        if (state) {
+            const { examination } = state;
+            setExam(examination);
+
+            const { member } = state;
+            member === true && setForm(4);
+            setLogin(member);
+        } else {
+            navigate('/services');
+        };
+    };
+
+    // Text for each form
+
     const [form, setForm] = useState(1);
     const [title, setTitle] = useState('Daftarkan Diri Anda');
-    const [inputInfo, setInputInfo] = useState('*Pisahkan tempat dan tanggal kelahiran dengan tanda koma');
+    const [inputInfo, setInputInfo] = useState('');
     const [modal, setModal] = useState(0);
     const [agree, setAgree] = useState(0);
 
-    //Static options for select
+    // Static options for select
 
     const religion = [
-        { label: 'Islam', value: 'islam' },
-        { label: 'Kristen Protestan', value: 'kristen protestan' },
-        { label: 'Katolik', value: 'katolik' },
-        { label: 'Hindu', value: 'hindu' },
-        { label: 'Buddha', value: 'buddha' },
-        { label: 'Konghucu', value: 'konghucu' }
+        { label: 'Islam', value: 'Islam' },
+        { label: 'Kristen Protestan', value: 'Kristen Protestan' },
+        { label: 'Katolik', value: 'Katolik' },
+        { label: 'Hindu', value: 'Hindu' },
+        { label: 'Buddha', value: 'Buddha' },
+        { label: 'Konghucu', value: 'Konghucu' }
     ];
 
     const gender = [
-        { label: 'Laki-laki', value: 'laki-laki' },
-        { label: 'Perempuan', value: 'perempuan' }
+        { label: 'Laki-laki', value: 'Male' },
+        { label: 'Perempuan', value: 'Female' }
     ];
 
     const maritalStatus = [
-        { label: 'Belum Menikah', value: 'belum menikah' },
-        { label: 'Menikah', value: 'menikah' },
-        { label: 'Cerai Hidup', value: 'cerai hidup' },
-        { label: 'Cerai Mati', value: 'cerai mati' },
-        { label: 'Janda/Duda', value: 'janda/duda' }
+        { label: 'Belum Menikah', value: 'Single' },
+        { label: 'Menikah', value: 'Married' },
+        { label: 'Kawin Cerai', value: 'Divorved' },
     ];
 
+    // User input group by form types
+
+    const [profile, setProfile] = useState({
+        identity_number: '',
+        name: '',
+        place_of_birth: '',
+        date_of_birth: '',
+        religion: ['', ''],
+        gender: ['', ''],
+        marrital_status: ['', ''],
+        occupation: '',
+    });
+
+    const [contact, setContact] = useState({
+        phone_number: '',
+        email: '',
+        instagram: '',
+        facebook: '',
+        youtube: '',
+        address: '',
+    });
+
+    const [sourceInfo, setSourceInfo] = useState([]);
+
+    const [reservation, setReservation] = useState({
+        branch_id: '',
+        treatment_id: '',
+        request_date: '',
+        request_time: '',
+        anamnesis: '',
+        customer_bank_account: '',
+        customer_bank_account_name: '',
+        deposit: '',
+        transfer_date: '',
+        deposit_receipt: ''
+    });
 
     useEffect(() => {
+        checkService();
 
         // Setting Title and Message
+
         if (form === 1) {
             setTitle('Daftarkan Diri Anda')
-            setInputInfo('*Pisahkan tempat dan tanggal kelahiran dengan tanda koma');
+            setInputInfo('');
         };
 
         if (form === 2) {
@@ -62,91 +120,382 @@ const Forms = () => {
             setTitle('Formulir Reservasi')
         };
 
+        console.log(profile, contact);
+
     }, [form]);
 
     // 3 Difference forms
 
-    const Profile = () => {
+    const Profile = ({ profile, setProfile }) => {
+        const [localProfile, setLocalProfile] = useState(profile);
+
+        const handleInput = (property, value) => {
+            setLocalProfile(prev => ({
+                ...prev,
+                [property]: value
+            }));
+        };
+
+        const saveData = () => {
+            setProfile({
+                ...profile,
+                ...localProfile
+            });
+
+            setForm((prev) => prev + 1);
+        };
+
         return (
-            <div className='form-body'>
-                <InputGroup name='Nomor Identitas' type='number' placeholder='Nomor Kartu Identitas' />
-                <InputGroup name='Nama' type='text' placeholder='Masukkan Nama Anda' />
-                <InputGroup name='Tempat Tanggal lahir' type='text' placeholder='Contoh: Kota, 26-12-2000' mark='*' />
-                <InputGroup name='Jenis Kelamin' type='select' placeholder='Pilih Jenis Kelamin' options={gender} />
-                <InputGroup name='Agama' type='select' placeholder='Pilih Agama' options={religion} />
-                <InputGroup name='Status Pernikahan' type='select' placeholder='Pilih Status Pernikahan' options={maritalStatus} />
-            </div>
+            <>
+                <div className='form-body'>
+                    <InputGroup
+                        name='Nomor Identitas'
+                        type='number'
+                        placeholder='Nomor Kartu Identitas'
+                        value={profile.identity_number}
+                        set={(value) => handleInput('identity_number', value)}
+                    />
+                    <InputGroup
+                        name='Nama'
+                        type='text'
+                        placeholder='Masukkan Nama Anda'
+                        value={profile.name}
+                        set={(value) => handleInput('name', value)}
+                    />
+                    <div className='double-input'>
+                        <InputGroup
+                            name='Tempat Tanggal lahir'
+                            type='text'
+                            placeholder='Kota'
+                            value={profile.place_of_birth}
+                            set={(value) => handleInput('place_of_birth', value)}
+                        />
+                        <InputGroup
+                            name=''
+                            type='date'
+                            value={profile.date_of_birth}
+                            set={(value) => handleInput('date_of_birth', value)}
+                        />
+                    </div>
+                    <InputGroup
+                        name='Agama'
+                        type='select'
+                        placeholder='Pilih Agama'
+                        options={religion}
+                        index={profile.religion[0]}
+                        set={(value) => handleInput('religion', value)}
+                    />
+                    <InputGroup
+                        name='Jenis Kelamin'
+                        type='select'
+                        placeholder='Pilih Jenis Kelamin'
+                        options={gender}
+                        index={profile.gender[0]}
+                        set={(value) => handleInput('gender', value)}
+                    />
+                    <InputGroup
+                        name='Status Pernikahan'
+                        type='select'
+                        placeholder='Pilih Status Pernikahan'
+                        options={maritalStatus}
+                        index={profile.marrital_status[0]}
+                        set={(value) => handleInput('marrital_status', value)}
+                    />
+                    <InputGroup
+                        name='Pekerjaan'
+                        type='text'
+                        placeholder='Masukkan Nama atau Detail Pekerjaan'
+                        value={profile.occupation}
+                        set={(value) => handleInput('occupation', value)}
+                    />
+                </div>
+                <div className='form-footer'>
+                    <div className='btn-group'>
+                        {
+                            login === true ?
+                                <button className='form-button' onClick={() => {
+                                    navigate('/services', {
+                                        state: {
+                                            member: login
+                                        }
+                                    })
+                                }}>Kembali</button>
+                                :
+                                <button className='form-button' onClick={() => navigate('/services')}>Kembali</button>
+                        }
+                        <button className='form-button' onClick={saveData}>Berikutnya</button>
+                    </div>
+                </div>
+            </>
         );
     };
 
-    const Contact = () => {
+    const Contact = ({ contact, setContact }) => {
+        const [localContact, setLocalContact] = useState(contact);
+
+        const handleInput = (property, value) => {
+            setLocalContact(prev => ({
+                ...prev,
+                [property]: value
+            }));
+        };
+
+        const saveData = (act) => {
+            setContact({
+                ...contact,
+                ...localContact
+            });
+
+            act === 1 ? setForm((prev) => prev + 1) : setForm((prev) => prev - 1);
+        };
+
         return (
-            <div className='form-body'>
-                <div className='form-col'>
-                    <InputGroup name='Nomor Telepon' type='number' placeholder='No Telepon / Whatsapp' />
-                    <InputGroup name='Alamat Email' type='text' placeholder='Masukkan Email Anda' />
-                    <InputGroup name='Akun Instagram' type='text' placeholder='Username Akun Anda' mark='*' />
-                    <InputGroup name='Akun Youtube' type='text' placeholder='Username Akun Anda' mark='*' />
+            <>
+                <div className='form-body'>
+                    <div className='form-col'>
+                        <InputGroup
+                            name='Nomor Telepon'
+                            type='number'
+                            placeholder='No Telepon / Whatsapp'
+                            value={contact.phone_number}
+                            set={(value) => handleInput('phone_number', value)}
+                        />
+                        <InputGroup
+                            name='Alamat Email'
+                            type='text'
+                            placeholder='Masukkan Email Anda'
+                            value={contact.email}
+                            set={(value) => handleInput('email', value)}
+                        />
+                        <InputGroup
+                            name='Akun Instagram'
+                            type='text'
+                            placeholder='Username Akun Anda'
+                            mark='*'
+                            value={contact.instagram}
+                            set={(value) => handleInput('instagram', value)}
+                        />
+                        <InputGroup
+                            name='Akun Facebook'
+                            type='text'
+                            placeholder='Username Akun Anda'
+                            mark='*'
+                            value={contact.facebook}
+                            set={(value) => handleInput('facebook', value)}
+                        />
+                        <InputGroup
+                            name='Akun Youtube'
+                            type='text'
+                            placeholder='Username Akun atau Channel Anda'
+                            mark='*'
+                            value={contact.youtube}
+                            set={(value) => handleInput('youtube', value)}
+                        />
+                    </div>
+                    <div className='form-col'>
+                        <InputGroup
+                            name='Alamat Rumah'
+                            type='textarea'
+                            value={contact.address}
+                            set={(value) => handleInput('address', value)}
+                        />
+                    </div>
                 </div>
-                <div className='form-col'>
-                    <InputGroup name='Alamat Rumah' type='textarea' />
+                <div className='form-footer'>
+                    <p>{inputInfo}</p>
+
+                    <div className='btn-group'>
+                        <button className='form-button' onClick={() => saveData(0)}>Kembali</button>
+                        <button className='form-button' onClick={() => saveData(1)}>Berikutnya</button>
+                    </div>
                 </div>
-            </div>
+            </>
         );
     };
 
-    const BeudentInfo = () => {
+    const BeudentInfo = ({ sourceInfo, setSourceInfo }) => {
+        const [localSourceInfo, setLocalSourceInfo] = useState(sourceInfo);
+
+        const selectBox = (index, val) => {
+            setLocalSourceInfo([index, val]);
+        };
+
+        const saveData = (act) => {
+            setSourceInfo(localSourceInfo);
+            act === 1 ? setForm((prev) => prev + 1) : setForm((prev) => prev - 1);
+        };
+
         return (
-            <div className='option-group'>
-                <button className='box-option-btn'>
-                    <OptionBox img={require('../assets/images/google.jpg')} value='Browser' />
-                </button>
-                <button className='box-option-btn'>
-                    <OptionBox img={require('../assets/images/instagram.png')} value='Instagram' />
-                </button>
-                <button className='box-option-btn'>
-                    <OptionBox img={require('../assets/images/others.png')} value='Lainnya' />
-                </button>
-            </div>
+            <>
+                <div className='option-group'>
+                    <button className='box-option-btn' onClick={() => selectBox(0, 'browser')}>
+                        <OptionBox img={require('../assets/images/google.jpg')} value='Browser' active={localSourceInfo[0] === 0 ? true : false} />
+                    </button>
+                    <button className='box-option-btn' onClick={() => selectBox(1, 'instagram')}>
+                        <OptionBox img={require('../assets/images/instagram.png')} value='Instagram' active={localSourceInfo[0] === 1 ? true : false} />
+                    </button>
+                    <button className='box-option-btn' onClick={() => selectBox(2, 'lainnya')}>
+                        <OptionBox img={require('../assets/images/others.png')} value='Lainnya' active={localSourceInfo[0] === 2 ? true : false} />
+                    </button>
+                </div>
+                <div className='form-footer'>
+                    <p>{inputInfo}</p>
+
+                    <div className='btn-group'>
+                        <button className='form-button' onClick={() => saveData(0)}>Kembali</button>
+                        <button className='form-button' onClick={() => saveData(1)}>Berikutnya</button>
+                    </div>
+                </div>
+            </>
         );
     };
 
-    const Reservation = () => {
+    const Reservation = ({ profile, contact, reservation, setReservation }) => {
+        const [localReservation, setLocalReservation] = useState(reservation);
+
+        const handleInput = (property, value) => {
+            setLocalReservation(prev => ({
+                ...prev,
+                [property]: value
+            }));
+        };
+
+        const saveData = (act) => {
+            setReservation({
+                ...reservation,
+                ...localReservation
+            });
+
+            act === 1 ? setModal(1) : setForm((prev) => prev - 1);
+        };
+
         return (
-            <div className='reservation-session'>
-                <div className='section'>
-                    <h3>Data Diri Anda</h3>
-                    <div className='form-body'>
-                        <DataLabel label='Nomor Identitas' data='3511110802010002' />
-                        <DataLabel label='Nama' data='Chelo Tasnim Haryono' />
-                        <DataLabel label='Tempat Tanggal Lahir' data='Surabaya, 7 Januari 2001' />
-                        <DataLabel label='Jenis Kelamin' data='Laki-Laki' />
-                        <DataLabel label='Agama' data='dummydata' />
-                        <DataLabel label='Status Pernikahan' data='Belum Menikah' />
-                        <DataLabel label='Nomor Telepon' data='+62 852-1124-9982' />
-                        <DataLabel label='Alamat Email' data='dummy@gmail.com' />
-                        <DataLabel label='Alamat Rumah' data='Jalan Maju Terus Pantang Mundur No. 200' />
+            <>
+                <div className='reservation-session'>
+                    <div className='section'>
+                        <h3>Data Diri Anda</h3>
+                        <div className='form-body'>
+                            <DataLabel label='Nomor Identitas' data={profile.identity_number || 'Belum Melengkapi Data'} />
+                            <DataLabel label='Nama' data={profile.name || 'Belum Melengkapi Data'} />
+                            <DataLabel label='Tempat Tanggal Lahir' data={profile.place_of_birth && profile.date_of_birth ? profile.place_of_birth + ', ' + profile.date_of_birth : 'Belum Melengkapi Data'} />
+                            <DataLabel label='Agama' data={profile.religion[1] || 'Belum Melengkapi Data'} />
+                            <DataLabel label='Jenis Kelamin' data={profile.gender[1] || 'Belum Melengkapi Data'} />
+                            <DataLabel label='Status Pernikahan' data={profile.maritalStatus || 'Belum Melengkapi Data'} />
+                            <DataLabel label='Nomor Telepon' data={contact.phone_number || 'Belum Melengkapi Data'} />
+                            <DataLabel label='Alamat Email' data={contact.email || 'Belum Melengkapi Data'} />
+                            <DataLabel label='Pekerjaan' data={profile.occupation || 'Belum Melengkapi Data'} />
+                            <DataLabel label='Alamat Rumah' data={contact.address || 'Belum Melengkapi Data'} />
+                        </div>
                     </div>
-                </div>
-                <div className='section'>
-                    <h3>Reservasi</h3>
-                    <div className='form-body'>
-                        <InputGroup name='Cabang Klinik' type='select' placeholder='Pilih Cabang' options={[{ label: 'Surabaya', value: 'surabaya' }]} />
-                        <InputGroup name='Layanan' type='select' placeholder='Pilih Layanan' options={[{ label: 'Tambal Gigi', value: 'tambal gigi' }]} />
-                        <InputGroup name='Waktu Kunjungan' type='datetime-local' placeholder='Atur Tanggal dan Jam' />
+                    <div className='section'>
+                        <h3>Reservasi</h3>
+                        <div className='form-body'>
+                            <InputGroup
+                                name='Cabang Klinik'
+                                type='select'
+                                placeholder='Pilih Cabang'
+                                options={[{ label: 'Surabaya', value: 'surabaya' }]}
+                                index={reservation.branch_id[0]}
+                                set={(value) => handleInput('branch_id', value)}
+                            />
+                            <InputGroup
+                                name='Layanan'
+                                type='select'
+                                placeholder='Pilih Layanan'
+                                options={[{ label: 'Tambal Gigi', value: 'tambal gigi' }]}
+                                index={reservation.treatment_id[0]}
+                                set={(value) => handleInput('treatment_id', value)}
+                            />
+                            <div className='double-input'>
+                                <InputGroup
+                                    name='Waktu Kunjungan'
+                                    type='time'
+                                    placeholder='Jam'
+                                    value={reservation.request_time}
+                                    set={(value) => handleInput('request_time', value)}
+                                />
+                                <InputGroup
+                                    name=''
+                                    type='date'
+                                    placeholder='Tanggal'
+                                    value={reservation.request_date}
+                                    set={(value) => handleInput('request_date', value)}
+                                />
+                            </div>
+                            <InputGroup
+                                name='Masalah Mulut'
+                                type='text'
+                                placeholder='Berikan keluhan mulut yang anda alami'
+                                value={reservation.anamnesis}
+                                set={(value) => handleInput('anamnesis', value)}
+                            />
+                        </div>
                     </div>
+                    {
+                        exam === 2 &&
+                        <div className='section'>
+                            <h3>Pembayaran Deposit</h3>
+                            <div className='form-body'>
+                                <InputGroup
+                                    name='Bank Pengirim'
+                                    type='select'
+                                    placeholder='Pilih Bank'
+                                    options={[{ label: 'BRI', value: 'bri' }]}
+                                    index={reservation.customer_bank_account[0]}
+                                    set={(value) => handleInput('customer_bank_account', value)}
+                                />
+                                <InputGroup
+                                    name='Nama Rekening'
+                                    type='text'
+                                    placeholder='Nama Rekening Bank'
+                                    value={reservation.customer_bank_account_name}
+                                    set={(value) => handleInput('customer_bank_account_name', value)}
+                                />
+                                <InputGroup
+                                    name='Jumlah Deposit'
+                                    type='number'
+                                    placeholder='Rp'
+                                    value={reservation.deposit}
+                                    set={(value) => handleInput('deposit', value)}
+                                />
+                                <InputGroup
+                                    name='Tanggal Pembayaran'
+                                    type='date'
+                                    placeholder='Atur Tanggal'
+                                    value={reservation.transfer_date}
+                                    set={(value) => handleInput('transfer_date', value)}
+                                />
+                                <InputGroup
+                                    name='Bukti Pembayaran'
+                                    type='file'
+                                    placeholder='Unggah Bukti'
+                                />
+                            </div>
+                        </div>
+                    }
                 </div>
-                <div className='section'>
-                    <h3>Pembayaran Deposit</h3>
-                    <div className='form-body'>
-                        <InputGroup name='Bank Pengirim' type='select' placeholder='Pilih Bank' options={[{ label: 'BRI', value: 'bri' }]} />
-                        <InputGroup name='Nama Rekening' type='text' placeholder='Nama Rekening Bank' />
-                        <InputGroup name='Jumlah Deposit' type='number' placeholder='Rp' />
-                        <InputGroup name='Tanggal Pembayaran' type='date' placeholder='Atur Tanggal' />
-                        <InputGroup name='Bukti Pembayaran' type='file' placeholder='Unggah Bukti' />
+                <div className='form-footer'>
+                    <div className='payment-info'>
+                        <label>Rekening Pembayaran</label>
+                        <p>BCA : 3500120201020 (Beaudent)</p>
                     </div>
-                </div>
-            </div>
+                    <div className='btn-group'>
+                        {
+                            login === true ?
+                                <button className='form-button' onClick={() => {
+                                    navigate('/services', {
+                                        state: {
+                                            member: login
+                                        }
+                                    })
+                                }}>Kembali</button>
+                                :
+                                <button className='form-button' onClick={() => saveData(0)}>Kembali</button>
+                        }
+                        <button className='form-button on' onClick={() => saveData(1)}>Konfirmasi</button>
+                    </div>
+                </div >
+            </>
         );
     };
 
@@ -178,30 +527,10 @@ const Forms = () => {
                     }
 
                     {/* Template for the each form */}
-                    {form === 1 && <Profile />}
-                    {form === 2 && <Contact />}
-                    {form === 3 && <BeudentInfo />}
-                    {form === 4 && <Reservation />}
-
-                    <div className='form-footer'>
-                        <p>{inputInfo}</p>
-                        {
-                            form === 4 &&
-                            <div className='payment-info'>
-                                <label>Rekening Pembayaran</label>
-                                <p>BCA : 3500120201020 (Beaudent)</p>
-                            </div>
-                        }
-                        <div className='btn-group'>
-                            <button className='form-button' onClick={() => {
-                                form > 1 ? setForm((prev) => prev - 1) : navigate('/services')
-                            }}>Kembali</button>
-
-                            <button className={`form-button ${form === 4 && 'on'}`} onClick={() => {
-                                form < 4 ? setForm((prev) => prev + 1) : setModal(1)
-                            }}>{form === 4 ? 'Konfirmasi' : 'Berikutnya'}</button>
-                        </div>
-                    </div>
+                    {form === 1 && <Profile profile={profile} setProfile={setProfile} />}
+                    {form === 2 && <Contact contact={contact} setContact={setContact} />}
+                    {form === 3 && <BeudentInfo sourceInfo={sourceInfo} setSourceInfo={setSourceInfo} />}
+                    {form === 4 && <Reservation profile={profile} contact={contact} reservation={reservation} setReservation={setReservation} />}
                 </div>
             </div>
 
