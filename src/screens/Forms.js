@@ -43,6 +43,8 @@ const Forms = () => {
     const [inputInfo, setInputInfo] = useState('');
     const [modal, setModal] = useState(0);
     const [agree, setAgree] = useState(0);
+    const [regConfirm, setRegConfirm] = useState(0);
+    const [regAgree, setRegAgree] = useState(0);
 
 
 
@@ -68,11 +70,24 @@ const Forms = () => {
         { label: 'Kawin Cerai', value: 'Divorved' },
     ];
 
+    const banks = [
+        { label: 'Bank Central Asia (BCA)', value: 'BCA' },
+        { label: 'Bank Rakyat Indonesia (BRI)', value: 'BRI' },
+        { label: 'Bank Mandiri', value: 'Mandiri' },
+        { label: 'Bank Negara Indonesia (BNI)', value: 'BNI' },
+        { label: 'Bank CIMB Niaga', value: 'CIMB Niaga' },
+        { label: 'Bank Danamon', value: 'Danamon' },
+        { label: 'Bank Panin', value: 'Panin' },
+        { label: 'Bank Lainnya', value: 'Lainnya' },
+    ];
+
+
 
 
     // User input group by form types
 
     const [profile, setProfile] = useState({
+        id: '',
         identity_number: '',
         name: '',
         place_of_birth: '',
@@ -95,12 +110,12 @@ const Forms = () => {
     const [sourceInfo, setSourceInfo] = useState([]);
 
     const [reservation, setReservation] = useState({
-        branch_id: '',
-        treatment_id: '',
+        branch_id: ['', ''],
+        treatment_id: ['', ''],
         request_date: '',
         request_time: '',
         anamnesis: '',
-        customer_bank_account: '',
+        customer_bank: ['', ''],
         customer_bank_account_name: '',
         deposit: '',
         transfer_date: '',
@@ -157,7 +172,8 @@ const Forms = () => {
                     const data = result.data.customer;
 
                     setForm(4);
-
+                    setRegConfirm(0);
+                  
                     let marrit = '';
                     if (data.marrital_status === 'Single') {
                         marrit = 'Belum Menikah';
@@ -171,6 +187,7 @@ const Forms = () => {
 
                     setProfile({
                         ...profile,
+                        id: data.id,
                         religion: data.religion,
                         gender: data.gender === 'Male' ? 'Laki-Laki' : 'Perempuan',
                         marrital_status: marrit
@@ -180,6 +197,53 @@ const Forms = () => {
                             examination: exam,
                             member: true,
                             creds: contact.phone_number
+                        }
+                    });
+                };
+            }).catch(err => {
+                console.log(err);
+            })
+            :
+            setErrors({
+                agree: [
+                    'Anda Tidak Menyetujui Syarat dan Ketentuan Kami'
+                ]
+            });
+    };
+
+
+
+    // Reservation API
+
+    const doReservation = async () => {
+        agree === 1 ?
+            await axios.post(`${process.env.REACT_APP_API_URL}reservation`, {
+                customer_bank_account: reservation.customer_bank_account_name,
+                branch_id: reservation.branch_id[1],
+                request_date: reservation.request_date,
+                request_time: reservation.request_time,
+                customer_id: profile.id,
+                is_control: exam === true ? 1 : 0,
+                treatment_id: reservation.treatment_id[1],
+                deposit: reservation.deposit,
+                anamnesis: reservation.anamnesis,
+                deposit_receipt: reservation.deposit_receipt,
+                customer_bank: reservation.customer_bank[1],
+                customer_bank_account_name: reservation.customer_bank_account_name,
+                transfer_date: reservation.transfer_date
+            }, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(result => {
+                if (result.data.error) {
+                    setErrors(result.data.error);
+                    setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
+                } else {
+                    navigate('/', {
+                        state: {
+                            message: 'Anda Telah Melakukan Reservasi'
                         }
                     });
                 };
@@ -221,6 +285,7 @@ const Forms = () => {
             };
 
             setProfile({
+                id: data.id,
                 identity_number: data.identity_number,
                 name: data.name,
                 place_of_birth: data.place_of_birth,
@@ -241,8 +306,46 @@ const Forms = () => {
 
 
 
+    // Get branches 
+
+    const [branches, setBranches] = useState([]);
+    const getBranches = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}branch`);
+            const branchData = response.data.branch.map(data => ({
+                label: data.name,
+                value: data.id
+            }));
+            setBranches(branchData);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
+
+    // Get treatments
+
+    const [treatments, setTreatments] = useState([]);
+    const getTreatments = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}treatment`);
+            const treatmentData = response.data.treatments.map(data => ({
+                label: data.name,
+                value: data.id
+            }));
+            setTreatments(treatmentData);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
+
     useEffect(() => {
         checkService();
+        getBranches();
+        getTreatments();
 
         // Setting Title and Message
 
@@ -458,8 +561,6 @@ const Forms = () => {
 
     const BeudentInfo = ({ sourceInfo, setSourceInfo }) => {
         const [localSourceInfo, setLocalSourceInfo] = useState(sourceInfo);
-        const [regConfirm, setRegConfirm] = useState(0);
-        const [regAgree, setRegAgree] = useState(0);
 
         const selectBox = (index, val) => {
             setLocalSourceInfo([index, val]);
@@ -489,32 +590,6 @@ const Forms = () => {
                     <div className='btn-group'>
                         <button className='form-button' onClick={() => saveData(0)}>Kembali</button>
                         <button className='form-button on' onClick={() => saveData(1)}>Konfirmasi</button>
-                    </div>
-                </div>
-                <div className={`modal ${regConfirm === 1 && 'active'}`}>
-                    <div className='pop-up'>
-                        <div className='notif'>
-                            <div className='icon'>
-                                <box-icon type='regular' name='message-alt-check' size='64px' color='white'></box-icon>
-                            </div>
-                            <p>Pastikan data diri anda telah sesuai sebelum mendaftar, anda akan diarahkan ke halaman reservasi setelah ini.</p>
-                        </div>
-                        <div className='card'>
-                            <div className='agreement'>
-                                <div>
-                                    <button className={`check-box ${regAgree === 1 && 'checked'}`} onClick={() => regAgree === 1 ? setRegAgree(0) : setRegAgree(1)}>
-                                        <box-icon type='regular' name='check-double' size='18px' color='white'></box-icon>
-                                    </button>
-                                </div>
-                                <div>
-                                    <p>Saya telah membaca dan menyetujui <a href={require('../assets/docs/terms-and-agreement.pdf')} download>syarat dan ketentuan</a> mendaftar dari Beaudent</p>
-                                </div>
-                            </div>
-                            <div className='btn-group'>
-                                <button className='form-button' onClick={() => setRegConfirm(0)}>Batal</button>
-                                <button className='form-button on' onClick={() => doRegist(regAgree)}>Daftar</button>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </>
@@ -565,7 +640,7 @@ const Forms = () => {
                                 name='Cabang Klinik'
                                 type='select'
                                 placeholder='Pilih Cabang'
-                                options={[{ label: 'Surabaya', value: 'surabaya' }]}
+                                options={branches}
                                 index={reservation.branch_id[0]}
                                 set={(value) => handleInput('branch_id', value)}
                             />
@@ -573,7 +648,7 @@ const Forms = () => {
                                 name='Layanan'
                                 type='select'
                                 placeholder='Pilih Layanan'
-                                options={[{ label: 'Tambal Gigi', value: 'tambal gigi' }]}
+                                options={treatments}
                                 index={reservation.treatment_id[0]}
                                 set={(value) => handleInput('treatment_id', value)}
                             />
@@ -611,9 +686,9 @@ const Forms = () => {
                                     name='Bank Pengirim'
                                     type='select'
                                     placeholder='Pilih Bank'
-                                    options={[{ label: 'BRI', value: 'bri' }]}
-                                    index={reservation.customer_bank_account[0]}
-                                    set={(value) => handleInput('customer_bank_account', value)}
+                                    options={banks}
+                                    index={reservation.customer_bank[0]}
+                                    set={(value) => handleInput('customer_bank', value)}
                                 />
                                 <InputGroup
                                     name='Nama Rekening'
@@ -638,8 +713,10 @@ const Forms = () => {
                                 />
                                 <InputGroup
                                     name='Bukti Pembayaran'
+                                    label={localReservation.deposit_receipt ? 'Bukti Terunggah' : 'Unggah Bukti'}
                                     type='file'
                                     placeholder='Unggah Bukti'
+                                    set={(value) => handleInput('deposit_receipt', value)}
                                 />
                             </div>
                         </div>
@@ -724,6 +801,35 @@ const Forms = () => {
 
 
             {/* Confirmation Modal */}
+            {/* Regist */}
+            <div className={`modal ${regConfirm === 1 && 'active'}`}>
+                <div className='pop-up'>
+                    <div className='notif'>
+                        <div className='icon'>
+                            <box-icon type='regular' name='message-alt-check' size='64px' color='white'></box-icon>
+                        </div>
+                        <p>Pastikan data diri anda telah sesuai sebelum mendaftar, anda akan diarahkan ke halaman reservasi setelah ini.</p>
+                    </div>
+                    <div className='card'>
+                        <div className='agreement'>
+                            <div>
+                                <button className={`check-box ${regAgree === 1 && 'checked'}`} onClick={() => regAgree === 1 ? setRegAgree(0) : setRegAgree(1)}>
+                                    <box-icon type='regular' name='check-double' size='18px' color='white'></box-icon>
+                                </button>
+                            </div>
+                            <div>
+                                <p>Saya telah membaca dan menyetujui <a href={require('../assets/docs/terms-and-agreement.pdf')} download>syarat dan ketentuan</a> mendaftar dari Beaudent</p>
+                            </div>
+                        </div>
+                        <div className='btn-group'>
+                            <button className='form-button' onClick={() => setRegConfirm(0)}>Batal</button>
+                            <button className='form-button on' onClick={() => doRegist(regAgree)}>Daftar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Reservation */}
             <div className={`modal ${modal === 1 && 'active'}`}>
                 <div className='pop-up'>
                     <div className='notif'>
@@ -745,7 +851,7 @@ const Forms = () => {
                         </div>
                         <div className='btn-group'>
                             <button className='form-button' onClick={() => setModal(0)}>Batal</button>
-                            <button className='form-button on'>Kirim</button>
+                            <button className='form-button on' onClick={doReservation}>Kirim</button>
                         </div>
                     </div>
                 </div>

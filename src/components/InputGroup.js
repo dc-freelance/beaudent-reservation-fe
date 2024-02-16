@@ -67,7 +67,19 @@ const InputGroup = (props) => {
                 ></textarea>
             }
             {
-                props.type !== 'select' && props.type !== 'textarea' &&
+                props.type === 'file' &&
+                <>
+                    <input
+                        type={props.type}
+                        accept='image/jpeg, image/png'
+                        placeholder={props.placeholder}
+                        onChange={event => props.set(event.target.files[0])}
+                    />
+                    <label>{props.label}</label>
+                </>
+            }
+            {
+                props.type !== 'select' && props.type !== 'textarea' && props.type !== 'file' &&
                 <input
                     type={props.type}
                     placeholder={props.placeholder}
