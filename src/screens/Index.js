@@ -1,10 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import OptionBox from '../components/OptionBox';
+import ErrorBox from '../components/ErrorBox';
 
 const Index = () => {
     const navigate = useNavigate();
+    const { state } = useLocation();
+    const [notif, setNotif] = useState('');
+
+    const checkSession = () => {
+        if (state) {
+            const { message } = state;
+            setNotif(message);
+        };
+    };
+
+    useEffect(() => {
+        checkSession();
+    }, []);
 
     return (
         <div className='page'>
@@ -27,6 +41,14 @@ const Index = () => {
                         </div>
                     </div>
                 </div>
+            </div>
+            <div className='error-container'>
+                {
+                    notif &&
+                    <button className='remove-error-button' onClick={() => setNotif('')}>
+                        <ErrorBox message={notif} />
+                    </button>
+                }
             </div>
         </div>
     );
