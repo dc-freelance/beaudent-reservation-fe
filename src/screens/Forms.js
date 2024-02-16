@@ -19,17 +19,18 @@ const Forms = () => {
     const { state } = useLocation();
     const [exam, setExam] = useState(0);
     const [login, setLogin] = useState(false);
+    const [user, setUser] = useState('');
 
     const checkService = () => {
         if (state) {
-            const { examination } = state;
+            const { examination, member, creds } = state;
             setExam(examination);
-
-            const { member } = state;
             member === true && setForm(4);
+            setUserData();
             setLogin(member);
+            setUser(creds);
         } else {
-            navigate('/services');
+            navigate('/');
         };
     };
 
@@ -127,7 +128,7 @@ const Forms = () => {
 
     const doRegist = async (agree) => {
         agree === 1 ?
-            await axios.post(`${process.env.REACT_APP_API_URL}store-registration`, {
+            await axios.post(`${process.env.REACT_APP_API_URL}registration`, {
                 identity_number: profile.identity_number,
                 name: profile.name,
                 place_of_birth: profile.place_of_birth,
@@ -141,7 +142,7 @@ const Forms = () => {
                 instagram: contact.instagram,
                 youtube: contact.youtube,
                 facebook: contact.facebook,
-                // address: contact.address,
+                address: contact.address,
                 source_of_information: sourceInfo[1]
             }, {
                 headers: {
@@ -149,12 +150,38 @@ const Forms = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then(result => {
-                console.log(result.data.error);
                 if (result.data.error) {
                     setErrors(result.data.error);
                     setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
                 } else {
-                    navigate('/reservation');
+                    const data = result.data.customer;
+
+                    setForm(4);
+
+                    let marrit = '';
+                    if (data.marrital_status === 'Single') {
+                        marrit = 'Belum Menikah';
+                    };
+                    if (data.marrital_status === 'Married') {
+                        marrit = 'Menikah';
+                    };
+                    if (data.marrital_status === 'Divorved') {
+                        marrit = 'Kawin Cerai';
+                    };
+
+                    setProfile({
+                        ...profile,
+                        religion: data.religion,
+                        gender: data.gender === 'Male' ? 'Laki-Laki' : 'Perempuan',
+                        marrital_status: marrit
+                    });
+                    navigate('/reservation', {
+                        state: {
+                            examination: exam,
+                            member: true,
+                            creds: contact.phone_number
+                        }
+                    });
                 };
             }).catch(err => {
                 console.log(err);
@@ -165,6 +192,51 @@ const Forms = () => {
                     'Anda Tidak Menyetujui Syarat dan Ketentuan Kami'
                 ]
             });
+    };
+
+
+
+    // Set user data
+
+    const setUserData = async () => {
+        await axios.post(`${process.env.REACT_APP_API_URL}customer`, {
+            creds: user
+        }, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(result => {
+            const data = result.data.customer;
+
+            let marrit = '';
+            if (data.marrital_status === 'Single') {
+                marrit = 'Belum Menikah';
+            };
+            if (data.marrital_status === 'Married') {
+                marrit = 'Menikah';
+            };
+            if (data.marrital_status === 'Divorved') {
+                marrit = 'Kawin Cerai';
+            };
+
+            setProfile({
+                identity_number: data.identity_number,
+                name: data.name,
+                place_of_birth: data.place_of_birth,
+                date_of_birth: data.date_of_birth,
+                gender: data.gender === 'Male' ? 'Laki-Laki' : 'Perempuan',
+                religion: data.religion,
+                marrital_status: marrit,
+                occupation: data.occupation,
+            });
+
+            setContact({
+                phone_number: data.phone_number,
+                email: data.email,
+                address: data.address,
+            });
+        }).catch(err => console.log(err));
     };
 
 
@@ -464,6 +536,8 @@ const Forms = () => {
                 ...reservation,
                 ...localReservation
             });
+
+            setModal(1);
         };
 
         return (
@@ -475,9 +549,9 @@ const Forms = () => {
                             <DataLabel label='Nomor Identitas' data={profile.identity_number || 'Belum Melengkapi Data'} />
                             <DataLabel label='Nama' data={profile.name || 'Belum Melengkapi Data'} />
                             <DataLabel label='Tempat Tanggal Lahir' data={profile.place_of_birth && profile.date_of_birth ? profile.place_of_birth + ', ' + profile.date_of_birth : 'Belum Melengkapi Data'} />
-                            <DataLabel label='Agama' data={profile.religion[1] || 'Belum Melengkapi Data'} />
-                            <DataLabel label='Jenis Kelamin' data={profile.gender[1] || 'Belum Melengkapi Data'} />
-                            <DataLabel label='Status Pernikahan' data={profile.maritalStatus || 'Belum Melengkapi Data'} />
+                            <DataLabel label='Agama' data={profile.religion || 'Belum Melengkapi Data'} />
+                            <DataLabel label='Jenis Kelamin' data={profile.gender || 'Belum Melengkapi Data'} />
+                            <DataLabel label='Status Pernikahan' data={profile.marrital_status || 'Belum Melengkapi Data'} />
                             <DataLabel label='Nomor Telepon' data={contact.phone_number || 'Belum Melengkapi Data'} />
                             <DataLabel label='Alamat Email' data={contact.email || 'Belum Melengkapi Data'} />
                             <DataLabel label='Pekerjaan' data={profile.occupation || 'Belum Melengkapi Data'} />
@@ -574,13 +648,14 @@ const Forms = () => {
                 <div className='form-footer'>
                     <div className='payment-info'>
                         <label>Rekening Pembayaran</label>
-                        <p>BCA : 3500120201020 (Beaudent)</p>
+                        <p>BCA : 8631216161 (PT. Beaudent Medika Indonesia)</p>
                     </div>
                     <div className='btn-group'>
                         <button className='form-button' onClick={() => {
                             navigate('/services', {
                                 state: {
-                                    member: login
+                                    member: login,
+                                    creds: user
                                 }
                             })
                         }}>Kembali</button>
