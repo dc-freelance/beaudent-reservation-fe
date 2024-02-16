@@ -4,11 +4,15 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import InputGroup from '../components/InputGroup';
 import OptionBox from '../components/OptionBox';
 import DataLabel from '../components/DataLabel';
+import ErrorBox from '../components/ErrorBox';
 
 import 'boxicons';
+import axios from 'axios';
 
 const Forms = () => {
     const navigate = useNavigate();
+
+
 
     // Examination or Check Up
 
@@ -29,6 +33,8 @@ const Forms = () => {
         };
     };
 
+
+
     // Text for each form
 
     const [form, setForm] = useState(1);
@@ -36,6 +42,8 @@ const Forms = () => {
     const [inputInfo, setInputInfo] = useState('');
     const [modal, setModal] = useState(0);
     const [agree, setAgree] = useState(0);
+
+
 
     // Static options for select
 
@@ -58,6 +66,8 @@ const Forms = () => {
         { label: 'Menikah', value: 'Married' },
         { label: 'Kawin Cerai', value: 'Divorved' },
     ];
+
+
 
     // User input group by form types
 
@@ -96,6 +106,69 @@ const Forms = () => {
         deposit_receipt: ''
     });
 
+
+
+    // Error Messages
+
+    const [errors, setErrors] = useState({});
+    const [totalErrors, setTotalErrors] = useState(Object.values(errors).reduce((acc, arr) => acc + arr.length, 0));
+
+    const removeError = (key, index) => {
+        const updatedErrors = { ...errors };
+        updatedErrors[key] = updatedErrors[key].filter((_, i) => i !== index);
+
+        setErrors(updatedErrors);
+        setTotalErrors(totalErrors - 1);
+    };
+
+
+
+    // Registration API
+
+    const doRegist = async (agree) => {
+        agree === 1 ?
+            await axios.post(`${process.env.REACT_APP_API_URL}store-registration`, {
+                identity_number: profile.identity_number,
+                name: profile.name,
+                place_of_birth: profile.place_of_birth,
+                date_of_birth: profile.date_of_birth,
+                religion: profile.religion[1],
+                gender: profile.gender[1],
+                marrital_status: profile.marrital_status[1],
+                occupation: profile.occupation,
+                phone_number: contact.phone_number,
+                email: contact.email,
+                instagram: contact.instagram,
+                youtube: contact.youtube,
+                facebook: contact.facebook,
+                // address: contact.address,
+                source_of_information: sourceInfo[1]
+            }, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(result => {
+                console.log(result.data.error);
+                if (result.data.error) {
+                    setErrors(result.data.error);
+                    setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
+                } else {
+                    navigate('/reservation');
+                };
+            }).catch(err => {
+                console.log(err);
+            })
+            :
+            setErrors({
+                agree: [
+                    'Anda Tidak Menyetujui Syarat dan Ketentuan Kami'
+                ]
+            });
+    };
+
+
+
     useEffect(() => {
         checkService();
 
@@ -119,8 +192,6 @@ const Forms = () => {
         if (form === 4) {
             setTitle('Formulir Reservasi')
         };
-
-        console.log(profile, contact);
 
     }, [form]);
 
@@ -315,6 +386,8 @@ const Forms = () => {
 
     const BeudentInfo = ({ sourceInfo, setSourceInfo }) => {
         const [localSourceInfo, setLocalSourceInfo] = useState(sourceInfo);
+        const [regConfirm, setRegConfirm] = useState(0);
+        const [regAgree, setRegAgree] = useState(0);
 
         const selectBox = (index, val) => {
             setLocalSourceInfo([index, val]);
@@ -322,7 +395,7 @@ const Forms = () => {
 
         const saveData = (act) => {
             setSourceInfo(localSourceInfo);
-            act === 1 ? setForm((prev) => prev + 1) : setForm((prev) => prev - 1);
+            act === 1 ? setRegConfirm(1) : setForm((prev) => prev - 1);
         };
 
         return (
@@ -343,7 +416,33 @@ const Forms = () => {
 
                     <div className='btn-group'>
                         <button className='form-button' onClick={() => saveData(0)}>Kembali</button>
-                        <button className='form-button' onClick={() => saveData(1)}>Berikutnya</button>
+                        <button className='form-button on' onClick={() => saveData(1)}>Konfirmasi</button>
+                    </div>
+                </div>
+                <div className={`modal ${regConfirm === 1 && 'active'}`}>
+                    <div className='pop-up'>
+                        <div className='notif'>
+                            <div className='icon'>
+                                <box-icon type='regular' name='message-alt-check' size='64px' color='white'></box-icon>
+                            </div>
+                            <p>Pastikan data diri anda telah sesuai sebelum mendaftar, anda akan diarahkan ke halaman reservasi setelah ini.</p>
+                        </div>
+                        <div className='card'>
+                            <div className='agreement'>
+                                <div>
+                                    <button className={`check-box ${regAgree === 1 && 'checked'}`} onClick={() => regAgree === 1 ? setRegAgree(0) : setRegAgree(1)}>
+                                        <box-icon type='regular' name='check-double' size='18px' color='white'></box-icon>
+                                    </button>
+                                </div>
+                                <div>
+                                    <p>Saya telah membaca dan menyetujui <a href={require('../assets/docs/terms-and-agreement.pdf')} download>syarat dan ketentuan</a> mendaftar dari Beaudent</p>
+                                </div>
+                            </div>
+                            <div className='btn-group'>
+                                <button className='form-button' onClick={() => setRegConfirm(0)}>Batal</button>
+                                <button className='form-button on' onClick={() => doRegist(regAgree)}>Daftar</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </>
@@ -360,13 +459,11 @@ const Forms = () => {
             }));
         };
 
-        const saveData = (act) => {
+        const saveData = () => {
             setReservation({
                 ...reservation,
                 ...localReservation
             });
-
-            act === 1 ? setModal(1) : setForm((prev) => prev - 1);
         };
 
         return (
@@ -480,19 +577,14 @@ const Forms = () => {
                         <p>BCA : 3500120201020 (Beaudent)</p>
                     </div>
                     <div className='btn-group'>
-                        {
-                            login === true ?
-                                <button className='form-button' onClick={() => {
-                                    navigate('/services', {
-                                        state: {
-                                            member: login
-                                        }
-                                    })
-                                }}>Kembali</button>
-                                :
-                                <button className='form-button' onClick={() => saveData(0)}>Kembali</button>
-                        }
-                        <button className='form-button on' onClick={() => saveData(1)}>Konfirmasi</button>
+                        <button className='form-button' onClick={() => {
+                            navigate('/services', {
+                                state: {
+                                    member: login
+                                }
+                            })
+                        }}>Kembali</button>
+                        <button className='form-button on' onClick={saveData}>Konfirmasi</button>
                     </div>
                 </div >
             </>
@@ -526,6 +618,8 @@ const Forms = () => {
                             </header>
                     }
 
+
+
                     {/* Template for the each form */}
                     {form === 1 && <Profile profile={profile} setProfile={setProfile} />}
                     {form === 2 && <Contact contact={contact} setContact={setContact} />}
@@ -533,6 +627,26 @@ const Forms = () => {
                     {form === 4 && <Reservation profile={profile} contact={contact} reservation={reservation} setReservation={setReservation} />}
                 </div>
             </div>
+
+
+
+            {/* Error Messages */}
+            <div className='error-container'>
+                {
+                    Object.entries(errors).map(([key, value]) => (
+                        value.map((message, index) => (
+                            <button key={`${key}-${index}`} className='remove-error-button' onClick={() => removeError(key, index)}>
+                                <ErrorBox message={message} />
+                            </button>
+                        ))
+                    )).flat().slice(0, 4)
+                }
+                {totalErrors > 4 && (
+                    <ErrorBox key='error' message={`Dan ${totalErrors - 4} Kesalahan Lain`} />
+                )}
+            </div>
+
+
 
             {/* Confirmation Modal */}
             <div className={`modal ${modal === 1 && 'active'}`}>
@@ -546,10 +660,12 @@ const Forms = () => {
                     <div className='card'>
                         <div className='agreement'>
                             <div>
-                                <button className={`check-box ${agree === 1 && 'checked'}`} onClick={() => agree === 1 ? setAgree(0) : setAgree(1)}></button>
+                                <button className={`check-box ${agree === 1 && 'checked'}`} onClick={() => agree === 1 ? setAgree(0) : setAgree(1)}>
+                                    <box-icon type='regular' name='check-double' size='18px' color='white'></box-icon>
+                                </button>
                             </div>
                             <div>
-                                <p>Saya telah membaca dan menyetujui syarat dan ketentuan dari Beaudent</p>
+                                <p>Saya telah membaca dan menyetujui <a href={require('../assets/docs/terms-and-agreement.pdf')} download>syarat dan ketentuan</a> reservasi dari Beaudent</p>
                             </div>
                         </div>
                         <div className='btn-group'>

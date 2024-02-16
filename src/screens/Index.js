@@ -16,7 +16,7 @@ const Index = () => {
                         <img src={require('../assets/images/logo.jpg')} draggable='false' />
                     </div>
                     <div className='content'>
-                        <p className='question'>Sudah pernah reservasi di Beaudent?</p>
+                        <p className='question'>Sudah pernah mendaftar di Beaudent?</p>
                         <div className='option-group'>
                             <button onClick={() => navigate('/services')} className='box-option-btn'>
                                 <OptionBox img={require('../assets/images/new-patient-images.png')} value='Belum Pernah' alt='Belum Pernah' />
