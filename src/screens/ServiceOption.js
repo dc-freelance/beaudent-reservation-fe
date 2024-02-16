@@ -7,11 +7,13 @@ const ServiceOption = () => {
 
     const { state } = useLocation();
     const [login, setLogin] = useState(false);
+    const [user, setUser] = useState('');
 
     const checkMember = () => {
         if (state) {
-            const { member } = state;
+            const { member, creds } = state;
             setLogin(member);
+            setUser(creds);
         };
     };
 
@@ -35,7 +37,8 @@ const ServiceOption = () => {
                             <button onClick={() => navigate('/reservation', {
                                 state: {
                                     examination: 2,
-                                    member: login
+                                    member: login,
+                                    creds: user
                                 }
                             })} className='box-option-btn'>
                                 <OptionBox img={require('../assets/images/examination-images.png')} value='Perawatan' alt='Perawatan' />
@@ -43,7 +46,8 @@ const ServiceOption = () => {
                             <button onClick={() => navigate('/reservation', {
                                 state: {
                                     examination: 1,
-                                    member: login
+                                    member: login,
+                                    creds: user
                                 }
                             })} className='box-option-btn'>
                                 <OptionBox img={require('../assets/images/check-up-images.png')} value='Kontrol' alt='Kontrol' />
