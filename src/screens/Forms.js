@@ -469,7 +469,7 @@ const Forms = () => {
                                 :
                                 <button className='form-button' onClick={() => navigate('/services')}>Kembali</button>
                         }
-                        <button className='form-button' onClick={saveData}>Berikutnya</button>
+                        <button className='form-button on' onClick={saveData}>Berikutnya</button>
                     </div>
                 </div>
             </>
@@ -542,6 +542,7 @@ const Forms = () => {
                         <InputGroup
                             name='Alamat Rumah'
                             type='textarea'
+                            placeholder='Alamat lengkap tempat tinggal anda'
                             value={contact.address}
                             set={(value) => handleInput('address', value)}
                         />
@@ -552,7 +553,7 @@ const Forms = () => {
 
                     <div className='btn-group'>
                         <button className='form-button' onClick={() => saveData(0)}>Kembali</button>
-                        <button className='form-button' onClick={() => saveData(1)}>Berikutnya</button>
+                        <button className='form-button on' onClick={() => saveData(1)}>Berikutnya</button>
                     </div>
                 </div>
             </>

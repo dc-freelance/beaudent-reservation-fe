@@ -72,6 +72,8 @@ button {
 
 .layer {
     position: relative;
+    display: flex;
+    justify-content: center;
     width: 85vw;
     height: 85vh;
     border-radius: 8px;
@@ -152,9 +154,9 @@ button {
     width: max-content;
     background: rgb(255, 255, 255);
     outline: none;
-    border: none;
+    border: 1px solid rgb(245, 245, 245);
     border-radius: 5px;
-    box-shadow: 3px 3px 15px rgba(0, 0, 0, .07);
+    box-shadow: 3px 3px 15px rgba(0, 0, 0, .05);
     transition: .15s;
     cursor: pointer;
     font-size: 15px;
@@ -165,6 +167,7 @@ button {
 }
 
 .form-button.on {
+    border: none;
     background: var(--theme);
     color: rgb(255, 255, 255);
 }
@@ -194,6 +197,7 @@ button {
 
 .form-session {
     width: 100%;
+    max-width: 1400px;
     height: calc(100% - 32px);
     padding: 32px 40px;
     overflow-y: scroll;

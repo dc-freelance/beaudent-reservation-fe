@@ -7,7 +7,7 @@ const InputGroup = (props) => {
     const selectThemes = {
         control: (provided, state) => ({
             ...provided,
-            backgroundColor: 'rgb(250, 250, 250)',
+            backgroundColor: 'rgb(255, 255, 255)',
             borderRadius: 'none',
             border: 'none',
             borderBottom: '2px solid rgb(235, 235, 235)',
@@ -64,6 +64,7 @@ const InputGroup = (props) => {
                 <textarea
                     onChange={event => props.set(event.target.value)}
                     defaultValue={props.value}
+                    placeholder={props.placeholder}
                 ></textarea>
             }
             {
