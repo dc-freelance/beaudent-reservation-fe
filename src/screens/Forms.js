@@ -173,7 +173,7 @@ const Forms = () => {
 
                     setForm(4);
                     setRegConfirm(0);
-
+                  
                     let marrit = '';
                     if (data.marrital_status === 'Single') {
                         marrit = 'Belum Menikah';
