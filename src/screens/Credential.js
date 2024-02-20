@@ -46,7 +46,7 @@ const Credential = () => {
                     </div>
                     <div className='content creds'>
                         <p className='question'>Nomor Whatsapp atau Email Anda</p>
-                        <input className='creds-input' placeholder='example@gmail.com' autoComplete='off' onChange={event => setCreds(event.target.value)} />
+                        <input className='creds-input' placeholder='example@mail.com' autoComplete='off' onChange={event => setCreds(event.target.value)} />
                         <button className='form-button' onClick={login}>Lanjutkan</button>
                     </div>
                 </div>

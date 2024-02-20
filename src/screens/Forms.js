@@ -173,7 +173,7 @@ const Forms = () => {
 
                     setForm(4);
                     setRegConfirm(0);
-                  
+
                     let marrit = '';
                     if (data.marrital_status === 'Single') {
                         marrit = 'Belum Menikah';
@@ -737,7 +737,7 @@ const Forms = () => {
                                 }
                             })
                         }}>Kembali</button>
-                        <button className='form-button on' onClick={saveData}>Konfirmasi</button>
+                        <button className='form-button on' onClick={saveData}>Reservasi</button>
                     </div>
                 </div >
             </>
