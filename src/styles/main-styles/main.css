@@ -37,8 +37,11 @@ button {
 
 :root {
     --theme: rgb(255, 116, 142);
-    --transparent-theme: rgba(219, 38, 157, .1);
-    --secondary-transparent: rgba(201, 75, 3, .01);
+    --transparent-theme: rgba(255, 116, 142, .6);
+    --semantic-theme-1: rgba(219, 38, 157, .1);
+    --semantic-theme-2: rgba(201, 75, 3, .01);
+    --theme-combination: rgb(252, 199, 8);
+    --transparent-theme-combination: rgba(252, 199, 8, .6);
 }
 
 .page {
@@ -54,7 +57,7 @@ button {
     position: absolute;
     width: 60vw;
     height: 60vw;
-    background: radial-gradient(circle, var(--transparent-theme), var(--secondary-transparent), transparent);
+    background: radial-gradient(circle, var(--semantic-theme-1), var(--semantic-theme-2), transparent);
 }
 
 .semantic-bg.top {
@@ -69,6 +72,8 @@ button {
 
 .layer {
     position: relative;
+    display: flex;
+    justify-content: center;
     width: 85vw;
     height: 85vh;
     border-radius: 8px;
@@ -149,21 +154,25 @@ button {
     width: max-content;
     background: rgb(255, 255, 255);
     outline: none;
-    border: none;
+    border: 1px solid rgb(245, 245, 245);
     border-radius: 5px;
-    box-shadow: 3px 3px 15px rgba(0, 0, 0, .07);
-    transition: .15s;
+    box-shadow: 3px 3px 15px rgba(0, 0, 0, .05);
     cursor: pointer;
     font-size: 15px;
 }
 
 .form-button:hover {
-    transform: translateY(8px);
+    filter: brightness(.98);
 }
 
 .form-button.on {
+    border: none;
     background: var(--theme);
     color: rgb(255, 255, 255);
+}
+
+.form-button.on:hover {
+    filter: brightness(.9);
 }
 
 .btn-group {
@@ -191,6 +200,7 @@ button {
 
 .form-session {
     width: 100%;
+    max-width: 1400px;
     height: calc(100% - 32px);
     padding: 32px 40px;
     overflow-y: scroll;
@@ -275,7 +285,7 @@ button {
 .form-body {
     display: flex;
     flex-wrap: wrap;
-    gap: 48px;
+    gap: 24px 48px;
 }
 
 .form-footer {
@@ -290,11 +300,41 @@ button {
     display: flex;
     flex-wrap: wrap;
     flex: 1;
-    gap: 48px;
+    gap: 24px 48px;
 }
 
 .form-body .form-col:first-child {
     flex: 2;
+}
+
+.double-input {
+    position: relative;
+    display: flex;
+    flex: 1;
+    margin-bottom: 24px;
+    min-width: 300px;
+    gap: 8px;
+
+    input {
+        min-width: 0 !important;
+    }
+
+    label {
+        position: absolute;
+        width: max-content;
+    }
+
+    .input-group:nth-child(1) {
+        position: static;
+    }
+
+    .input-group:nth-child(1) input {
+        transform: translateY(29px);
+    }
+
+    .input-group:nth-child(2) input {
+        transform: translateY(26.5px);
+    }
 }
 
 /* End of Second Type Screen (Form) */
@@ -313,9 +353,184 @@ button {
     }
 }
 
+.payment-info label {
+    font-size: 14px;
+}
+
 .payment-info p {
     font-family: poppins-bold;
-    font-size: 18px;
+    font-size: 16px;
+}
+
+.modal {
+    position: fixed;
+    display: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+
+    .pop-up {
+        max-width: 500px;
+    }
+
+    .card {
+        padding: 20px 24px;
+        background: rgb(255, 255, 255);
+        box-shadow: 3px 3px 15px rgba(0, 0, 0, .07);
+
+        .agreement {
+            display: flex;
+            flex-wrap: nowrap;
+            font-size: 14px;
+            gap: 12px;
+
+            .check-box {
+                display: flex;
+                width: 28px;
+                height: 28px;
+                margin-top: 3px;
+                justify-content: center;
+                align-items: center;
+                outline: none;
+                border: none;
+                background: rgb(235, 235, 235);
+                border-radius: 3px;
+                cursor: pointer;
+            }
+
+            .check-box.checked {
+                background: rgb(255, 116, 142);
+            }
+
+            .check-box box-icon {
+                display: none;
+                transform: translateY(-1px);
+            }
+
+            .check-box.checked box-icon {
+                display: block;
+            }
+        }
+    }
+}
+
+.spinner {
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.modal.active {
+    display: flex;
+}
+
+.notif {
+    display: flex;
+    margin-bottom: 8px;
+    padding: 20px 24px;
+    border-radius: 5px;
+    background: linear-gradient(130deg, var(--transparent-theme), var(--transparent-theme-combination));
+    text-align: justify;
+    font-size: 14px;
+    color: rgb(255, 255, 255);
+    gap: 24px;
+
+    p {
+        line-height: 24px;
+    }
+}
+
+.error-container {
+    position: fixed;
+    top: 8px;
+    right: 8px;
+    z-index: 10000;
+}
+
+.remove-error-button {
+    background: none;
+    outline: none;
+    border: none;
+    display: block;
+}
+
+input[type='file'] {
+    position: relative;
+    color: rgb(250, 250, 250) !important;
+    cursor: pointer;
+}
+
+input[type='file']::-webkit-file-upload-button {
+    background: rgb(255, 255, 255);
+    outline: none;
+    border: none;
+    padding: 8px 32px;
+    box-shadow: 3px 3px 15px rgba(0, 0, 0, .07);
+    cursor: pointer;
+    font-size: 13px;
+    color: rgb(255, 255, 255);
+}
+
+input[type='file']~label {
+    position: absolute;
+    top: 42px;
+    left: 2px;
+    width: 150px;
+    text-align: center;
+    font-size: 12px;
+    pointer-events: none;
+}
+
+.status-group {
+    display: flex;
+    margin-top: 5px;
+    margin-bottom: 64px;
+    gap: 24px;
+}
+
+.status-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-box label {
+    font-size: 12px;
+}
+
+.status-box p {
+    margin: 0 !important;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.status-box p.fail {
+    background: rgba(255, 0, 0, .3);
+}
+
+.status-box p.wait {
+    background: rgba(255, 255, 0, .3);
+}
+
+.status-box p.success {
+    background: rgba(0, 255, 0, .3);
+}
+
+.view-image {
+    text-decoration: none;
+
+    input {
+        pointer-events: none !important;
+    }
 }
 
 /* End of Third Type Screen (Reservation) */
@@ -337,6 +552,17 @@ button {
                 height: 100px;
             }
         }
+    }
+
+    .status-box {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .status-box p {
+        max-width: 100% !important;
+        font-size: 12px !important;
     }
 }
 
@@ -372,11 +598,15 @@ button {
                 top: -110px;
                 left: -24px;
             }
-          
+
             p {
                 max-width: 100%;
             }
         }
+    }
+
+    .pop-up {
+        max-width: 85% !important;
     }
 }
 
@@ -394,5 +624,20 @@ button {
 
     .creds-input::placeholder {
         font-size: 12px;
+    }
+
+    .notif {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .pop-up .notif,
+    .pop-up .card .agreement {
+        line-height: 24px;
+        font-size: 13px !important;
+    }
+
+    .double-input {
+        min-width: 275px !important;
     }
 }

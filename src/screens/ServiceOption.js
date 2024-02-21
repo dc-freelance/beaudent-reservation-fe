@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import OptionBox from '../components/OptionBox';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const ServiceOption = () => {
     const navigate = useNavigate();
+
+    const { state } = useLocation();
+    const [login, setLogin] = useState(false);
+    const [user, setUser] = useState('');
+
+    const checkMember = () => {
+        if (state) {
+            const { member, creds } = state;
+            setLogin(member);
+            setUser(creds);
+        };
+    };
+
+    useEffect(() => {
+        checkMember();
+    }, []);
 
     return (
         <div className='page'>
@@ -18,10 +34,22 @@ const ServiceOption = () => {
                     <div className='content'>
                         <p className='question'>Apa yang bisa kami bantu untuk anda?</p>
                         <div className='option-group'>
-                            <button onClick={() => navigate('/reservation')} className='box-option-btn'>
+                            <button onClick={() => navigate('/reservation', {
+                                state: {
+                                    examination: 2,
+                                    member: login,
+                                    creds: user
+                                }
+                            })} className='box-option-btn'>
                                 <OptionBox img={require('../assets/images/examination-images.png')} value='Perawatan' alt='Perawatan' />
                             </button>
-                            <button onClick={() => navigate('/reservation')} className='box-option-btn'>
+                            <button onClick={() => navigate('/reservation', {
+                                state: {
+                                    examination: 1,
+                                    member: login,
+                                    creds: user
+                                }
+                            })} className='box-option-btn'>
                                 <OptionBox img={require('../assets/images/check-up-images.png')} value='Kontrol' alt='Kontrol' />
                             </button>
                         </div>

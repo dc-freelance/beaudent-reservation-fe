@@ -1,0 +1,40 @@
+.error-box {
+    display: flex;
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    width: max-content;
+    min-width: 300px;
+    max-width: 300px;
+    align-items: center;
+    background: linear-gradient(130deg, var(--transparent-theme), var(--transparent-theme-combination));
+    border-radius: 5px;
+    gap: 12px;
+    line-height: 24px;
+    font-size: 14px;
+    color: rgb(255, 255, 255);
+}
+
+.error-box box-icon {
+    transform: translateY(3px);
+}
+
+.error-box p {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.error-box:hover {
+    max-width: max-content;
+}
+
+@media(max-width: 500px) {
+    .error-box {
+        min-width: 275px !important;
+    }
+
+    .error-box:hover p {
+        overflow: visible;
+        white-space: wrap;
+    }
+}
