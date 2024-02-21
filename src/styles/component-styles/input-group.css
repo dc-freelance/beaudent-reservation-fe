@@ -50,6 +50,7 @@
     top: 75% !important;
     height: 100%;
     opacity: 0;
+    border: none !important;
 }
 
 @media(max-width: 500px) {

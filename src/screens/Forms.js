@@ -960,10 +960,6 @@ const Forms = () => {
                     }
                 </div>
                 <div className='form-footer'>
-                    <div className='payment-info'>
-                        <label>Rekening Pembayaran</label>
-                        <p>BCA : 8631216161 (PT. Beaudent Medika Indonesia)</p>
-                    </div>
                     {
                         reservationId == null &&
                         <div className='btn-group'>
@@ -976,6 +972,13 @@ const Forms = () => {
                                 })
                             }}>Kembali</button>
                             <button className='form-button on' onClick={saveData}>Reservasi</button>
+                        </div>
+                    }
+                    {
+                        reservationId != null && reservationId.status == 'Done' && reservationId.deposit_status == null &&
+                        <div className='payment-info'>
+                            <label>Rekening Pembayaran</label>
+                            <p>BCA : 8631216161 (PT. Beaudent Medika Indonesia)</p>
                         </div>
                     }
                     {
@@ -993,6 +996,13 @@ const Forms = () => {
                             <button className='form-button' onClick={() => {
                                 navigate('/credential')
                             }}>Kembali</button>
+                        </div>
+                    }
+                    {
+                        reservationId != null && reservationId.status == 'Done' && reservationId.deposit_status != null &&
+                        <div className='payment-info'>
+                            <label>Rekening Pembayaran</label>
+                            <p>BCA : 8631216161 (PT. Beaudent Medika Indonesia)</p>
                         </div>
                     }
                     {
