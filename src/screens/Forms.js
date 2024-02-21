@@ -475,17 +475,17 @@ const Forms = () => {
 
         if (form === 1) {
             setTitle('Daftarkan Diri Anda')
-            setInputInfo('');
+            setInputInfo('*Wajib Diisi');
         };
 
         if (form === 2) {
             setTitle('Bagaimana Kami Menghubungi Anda?')
-            setInputInfo('*Kosongkan jika tidak ada');
+            setInputInfo('*Wajib Diisi');
         };
 
         if (form === 3) {
             setTitle('Darimana Anda Mengetahui Kami?')
-            setInputInfo('');
+            setInputInfo('Wajib Memilih Sumber Informasi');
         };
 
         if (form === 4) {
@@ -522,6 +522,7 @@ const Forms = () => {
                         name='Nomor Identitas'
                         type='number'
                         placeholder='Nomor Kartu Identitas'
+                        mark='*'
                         value={profile.identity_number}
                         set={(value) => handleInput('identity_number', value)}
                     />
@@ -529,6 +530,7 @@ const Forms = () => {
                         name='Nama'
                         type='text'
                         placeholder='Masukkan Nama Anda'
+                        mark='*'
                         value={profile.name}
                         set={(value) => handleInput('name', value)}
                     />
@@ -537,6 +539,7 @@ const Forms = () => {
                             name='Tempat Tanggal lahir'
                             type='text'
                             placeholder='Kota'
+                            mark='*'
                             value={profile.place_of_birth}
                             set={(value) => handleInput('place_of_birth', value)}
                         />
@@ -551,6 +554,7 @@ const Forms = () => {
                         name='Agama'
                         type='select'
                         placeholder='Pilih Agama'
+                        mark='*'
                         options={religion}
                         index={profile.religion[0]}
                         set={(value) => handleInput('religion', value)}
@@ -559,6 +563,7 @@ const Forms = () => {
                         name='Jenis Kelamin'
                         type='select'
                         placeholder='Pilih Jenis Kelamin'
+                        mark='*'
                         options={gender}
                         index={profile.gender[0]}
                         set={(value) => handleInput('gender', value)}
@@ -567,6 +572,7 @@ const Forms = () => {
                         name='Status Pernikahan'
                         type='select'
                         placeholder='Pilih Status Pernikahan'
+                        mark='*'
                         options={maritalStatus}
                         index={profile.marrital_status[0]}
                         set={(value) => handleInput('marrital_status', value)}
@@ -575,11 +581,14 @@ const Forms = () => {
                         name='Pekerjaan'
                         type='text'
                         placeholder='Masukkan Nama atau Detail Pekerjaan'
+                        mark='*'
                         value={profile.occupation}
                         set={(value) => handleInput('occupation', value)}
                     />
                 </div>
                 <div className='form-footer'>
+                    <p>{inputInfo}</p>
+
                     <div className='btn-group'>
                         {
                             login === true ?
@@ -627,6 +636,7 @@ const Forms = () => {
                             name='Nomor Telepon'
                             type='number'
                             placeholder='No Telepon / Whatsapp'
+                            mark='*'
                             value={contact.phone_number}
                             set={(value) => handleInput('phone_number', value)}
                         />
@@ -634,6 +644,7 @@ const Forms = () => {
                             name='Alamat Email'
                             type='text'
                             placeholder='Masukkan Email Anda'
+                            mark='*'
                             value={contact.email}
                             set={(value) => handleInput('email', value)}
                         />
@@ -641,7 +652,6 @@ const Forms = () => {
                             name='Akun Instagram'
                             type='text'
                             placeholder='Username Akun Anda'
-                            mark='*'
                             value={contact.instagram}
                             set={(value) => handleInput('instagram', value)}
                         />
@@ -649,7 +659,6 @@ const Forms = () => {
                             name='Akun Facebook'
                             type='text'
                             placeholder='Username Akun Anda'
-                            mark='*'
                             value={contact.facebook}
                             set={(value) => handleInput('facebook', value)}
                         />
@@ -657,7 +666,6 @@ const Forms = () => {
                             name='Akun Youtube'
                             type='text'
                             placeholder='Username Akun atau Channel Anda'
-                            mark='*'
                             value={contact.youtube}
                             set={(value) => handleInput('youtube', value)}
                         />
@@ -667,6 +675,7 @@ const Forms = () => {
                             name='Alamat Rumah'
                             type='textarea'
                             placeholder='Alamat lengkap tempat tinggal anda'
+                            mark='*'
                             value={contact.address}
                             set={(value) => handleInput('address', value)}
                         />
@@ -714,7 +723,7 @@ const Forms = () => {
 
                     <div className='btn-group'>
                         <button className='form-button' onClick={() => saveData(0)}>Kembali</button>
-                        <button className='form-button on' onClick={() => saveData(1)}>Konfirmasi</button>
+                        <button className='form-button on' onClick={() => saveData(1)}>Registrasi</button>
                     </div>
                 </div>
             </>
