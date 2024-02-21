@@ -418,6 +418,16 @@ button {
     }
 }
 
+.spinner {
+    animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .modal.active {
     display: flex;
 }
@@ -479,6 +489,50 @@ input[type='file']~label {
     pointer-events: none;
 }
 
+.status-group {
+    display: flex;
+    margin-top: 5px;
+    margin-bottom: 64px;
+    gap: 24px;
+}
+
+.status-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-box label {
+    font-size: 12px;
+}
+
+.status-box p {
+    margin: 0 !important;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+}
+
+.status-box p.fail {
+    background: rgba(255, 0, 0, .3);
+}
+
+.status-box p.wait {
+    background: rgba(255, 255, 0, .3);
+}
+
+.status-box p.success {
+    background: rgba(0, 255, 0, .3);
+}
+
+.view-image {
+    text-decoration: none;
+
+    input {
+        pointer-events: none !important;
+    }
+}
+
 /* End of Third Type Screen (Reservation) */
 
 @media(max-width: 900px) {
@@ -498,6 +552,17 @@ input[type='file']~label {
                 height: 100px;
             }
         }
+    }
+
+    .status-box {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+
+    .status-box p {
+        max-width: 100% !important;
+        font-size: 12px !important;
     }
 }
 

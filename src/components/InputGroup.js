@@ -68,6 +68,7 @@ const InputGroup = (props) => {
                     styles={selectThemes}
                     defaultValue={props.options[props.index]}
                     onChange={handleSelect}
+                    isDisabled={props.read}
                 />
 
             }
@@ -104,6 +105,7 @@ const InputGroup = (props) => {
                             setSelectedTime(time);
                             props.set(formattedTime);
                         }}
+                        readOnly={props.read}
                     />
                 </LocalizationProvider>
             }
@@ -114,6 +116,7 @@ const InputGroup = (props) => {
                     placeholder={props.placeholder}
                     defaultValue={props.value}
                     onChange={event => props.set(event.target.value)}
+                    readOnly={props.read}
                 />
             }
         </div>
