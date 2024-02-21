@@ -7,8 +7,10 @@ const Credential = () => {
     const navigate = useNavigate();
     const [creds, setCreds] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(0);
 
     const login = async () => {
+        setLoading(1);
         await axios.post(`${process.env.REACT_APP_API_URL}customer`, {
             creds: creds
         }, {
@@ -17,21 +19,37 @@ const Credential = () => {
                 'Content-Type': 'multipart/form-data'
             }
         }).then(result => {
+            setLoading(0);
             if (result.data.error) {
                 setError(result.data.error.creds);
             } else {
                 if (result.data.customer) {
-                    navigate('/services', {
-                        state: {
-                            member: true,
-                            creds: result.data.customer.phone_number
-                        }
-                    });
+                    if (result.data.customer.reservations[0]) {
+                        navigate('/reservation', {
+                            state: {
+                                reservation: result.data.customer.reservations[result.data.customer.reservations.length - 1],
+                                member: true,
+                                creds: result.data.customer.phone_number
+                            }
+                        });
+                    } else {
+                        navigate('/services', {
+                            state: {
+                                reservation: null,
+                                member: true,
+                                creds: result.data.customer.phone_number
+                            }
+                        });
+                    };
                 } else {
                     setError('Pengguna Tidak Ditemukan');
                 };
             };
-        }).catch(err => console.log(err));
+        }).catch(err => {
+            console.log(err);
+            setLoading(0);
+            setError('Terjadi Masalah Saat Mengirim Data');
+        });
     };
 
     return (
@@ -58,6 +76,11 @@ const Credential = () => {
                         <ErrorBox message={error} />
                     </button>
                 }
+            </div>
+            <div className={`modal loading ${loading === 1 && 'active'}`}>
+                <div className='spinner'>
+                    <box-icon type='regular' name='loader-circle' size='48px' color='rgb(255, 116, 142)'></box-icon>
+                </div>
             </div>
         </div>
     );

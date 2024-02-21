@@ -20,12 +20,15 @@ const Forms = () => {
     const [exam, setExam] = useState(0);
     const [login, setLogin] = useState(false);
     const [user, setUser] = useState('');
+    const [reservationId, setReservationId] = useState(0);
+    const [loading, setLoading] = useState(0);
 
     const checkService = () => {
         if (state) {
-            const { examination, member, creds } = state;
+            const { examination, member, creds, reservation } = state;
             setExam(examination);
             member === true && setForm(4);
+            setReservationId(reservation);
             setUserData();
             setLogin(member);
             setUser(creds);
@@ -110,6 +113,7 @@ const Forms = () => {
     const [sourceInfo, setSourceInfo] = useState([]);
 
     const [reservation, setReservation] = useState({
+        res_status: '',
         branch_id: ['', ''],
         treatment_id: ['', ''],
         request_date: '',
@@ -117,9 +121,12 @@ const Forms = () => {
         anamnesis: '',
         customer_bank: ['', ''],
         customer_bank_account_name: '',
+        customer_bank_account: '',
         deposit: '',
+        deposit_status: '',
         transfer_date: '',
-        deposit_receipt: ''
+        deposit_receipt: '',
+        is_control: ''
     });
 
 
@@ -142,7 +149,8 @@ const Forms = () => {
     // Registration API
 
     const doRegist = async (agree) => {
-        agree === 1 ?
+        if (agree === 1) {
+            setLoading(1);
             await axios.post(`${process.env.REACT_APP_API_URL}registration`, {
                 identity_number: profile.identity_number,
                 name: profile.name,
@@ -165,6 +173,7 @@ const Forms = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then(result => {
+                setLoading(0);
                 if (result.data.error) {
                     setErrors(result.data.error);
                     setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
@@ -202,13 +211,20 @@ const Forms = () => {
                 };
             }).catch(err => {
                 console.log(err);
+                setLoading(0);
+                setErrors({
+                    error: [
+                        'Terjadi Masalah Saat Mengirim Data'
+                    ]
+                });
             })
-            :
+        } else {
             setErrors({
                 agree: [
                     'Anda Tidak Menyetujui Syarat dan Ketentuan Kami'
                 ]
             });
+        };
     };
 
 
@@ -216,7 +232,8 @@ const Forms = () => {
     // Reservation API
 
     const doReservation = async () => {
-        agree === 1 ?
+        if (agree === 1) {
+            setLoading(1);
             await axios.post(`${process.env.REACT_APP_API_URL}reservation`, {
                 customer_bank_account: reservation.customer_bank_account_name,
                 branch_id: reservation.branch_id[1],
@@ -237,6 +254,7 @@ const Forms = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then(result => {
+                setLoading(0);
                 if (result.data.error) {
                     setErrors(result.data.error);
                     setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
@@ -249,13 +267,70 @@ const Forms = () => {
                 };
             }).catch(err => {
                 console.log(err);
+                setLoading(0);
+                setErrors({
+                    error: [
+                        'Terjadi Masalah Saat Mengirim Data'
+                    ]
+                });
             })
-            :
+        } else {
             setErrors({
                 agree: [
                     'Anda Tidak Menyetujui Syarat dan Ketentuan Kami'
                 ]
             });
+        };
+    };
+
+
+
+    // Deposit
+
+    const doDeposit = async () => {
+        if (agree === 1) {
+            setLoading(1);
+            await axios.post(`${process.env.REACT_APP_API_URL}deposit`, {
+                id: reservationId.id,
+                deposit: reservation.deposit,
+                deposit_receipt: reservation.deposit_receipt,
+                customer_bank: reservation.customer_bank[1],
+                customer_bank_account: reservation.customer_bank_account,
+                customer_bank_account_name: reservation.customer_bank_account_name,
+                transfer_date: reservation.transfer_date
+            }, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(result => {
+                setLoading(0);
+                if (result.data.error) {
+                    setErrors(result.data.error);
+                    setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
+                } else {
+                    navigate('/', {
+                        state: {
+                            message: 'Anda Telah Membayar Deposit'
+                        }
+                    });
+                };
+            }).catch(err => {
+                console.log(err);
+                setLoading(0);
+                setErrors({
+                    error: [
+                        'Terjadi Masalah Saat Mengirim Data'
+                    ]
+                });
+            })
+        } else {
+            setErrors({
+                agree: [
+                    'Anda Tidak Menyetujui Syarat dan Ketentuan Kami'
+                ]
+            });
+        };
     };
 
 
@@ -301,7 +376,38 @@ const Forms = () => {
                 email: data.email,
                 address: data.address,
             });
-        }).catch(err => console.log(err));
+
+            if (reservationId != null) {
+                const customerRes = data.reservations[data.reservations.length - 1];
+                setReservation({
+                    ...reservation,
+                    branch_id: customerRes.branches.name,
+                    treatment_id: customerRes.treatments.name,
+                    request_date: customerRes.request_date,
+                    request_time: customerRes.request_time,
+                    is_control: customerRes.is_control,
+                    anamnesis: customerRes.anamnesis,
+                });
+
+                if (customerRes.deposit_status != null) {
+                    setReservation({
+                        branch_id: customerRes.branches.name,
+                        treatment_id: customerRes.treatments.name,
+                        request_date: customerRes.request_date,
+                        request_time: customerRes.request_time,
+                        is_control: customerRes.is_control,
+                        anamnesis: customerRes.anamnesis,
+                        customer_bank: customerRes.customer_bank,
+                        customer_bank_account_name: customerRes.customer_bank_account_name,
+                        customer_bank_account: customerRes.customer_bank_account,
+                        deposit: customerRes.deposit,
+                        deposit_receipt: customerRes.deposit_receipt,
+                        transfer_date: customerRes.transfer_date,
+                        deposit_status: customerRes.deposit_status
+                    });
+                };
+            };
+        }).catch(err => { });
     };
 
 
@@ -338,6 +444,24 @@ const Forms = () => {
         } catch (error) {
             console.error(error);
         }
+    };
+
+
+
+    // IDR Currency
+    const convertRp = (val) => {
+        let final;
+        let rp = val.split('.')[0].split('').reverse().join('');
+        for (let i = 0; i < val.length; i += 3) {
+            final += rp.substring(i, i + 3) + '.';
+
+            if (i >= val.length - 3) {
+                let removeDot = final.split('').reverse().join('').replace('denifednu', '');
+                removeDot[1] == '.' ? final = removeDot.substring(2, removeDot.length) : final = removeDot.substring(1, removeDot.length);
+            }
+        };
+
+        return final + ',00';
     };
 
 
@@ -636,50 +760,95 @@ const Forms = () => {
                     </div>
                     <div className='section'>
                         <h3>Reservasi</h3>
-                        <div className='form-body'>
-                            <InputGroup
-                                name='Cabang Klinik'
-                                type='select'
-                                placeholder='Pilih Cabang'
-                                options={branches}
-                                index={reservation.branch_id[0]}
-                                set={(value) => handleInput('branch_id', value)}
-                            />
-                            <InputGroup
-                                name='Layanan'
-                                type='select'
-                                placeholder='Pilih Layanan'
-                                options={treatments}
-                                index={reservation.treatment_id[0]}
-                                set={(value) => handleInput('treatment_id', value)}
-                            />
-                            <div className='double-input'>
-                                <InputGroup
-                                    name='Waktu Kunjungan'
-                                    type='time'
-                                    placeholder='Jam'
-                                    value={reservation.request_time}
-                                    set={(value) => handleInput('request_time', value)}
-                                />
-                                <InputGroup
-                                    name=''
-                                    type='date'
-                                    placeholder='Tanggal'
-                                    value={reservation.request_date}
-                                    set={(value) => handleInput('request_date', value)}
-                                />
-                            </div>
-                            <InputGroup
-                                name='Masalah Mulut'
-                                type='text'
-                                placeholder='Berikan keluhan mulut yang anda alami'
-                                value={reservation.anamnesis}
-                                set={(value) => handleInput('anamnesis', value)}
-                            />
-                        </div>
+                        {
+                            reservationId == null ?
+                                <div className='form-body'>
+                                    <InputGroup
+                                        name='Cabang Klinik'
+                                        type='select'
+                                        placeholder='Pilih Cabang'
+                                        options={branches}
+                                        index={reservation.branch_id[0]}
+                                        set={(value) => handleInput('branch_id', value)}
+                                    />
+                                    <InputGroup
+                                        name='Layanan'
+                                        type='select'
+                                        placeholder='Pilih Layanan'
+                                        options={treatments}
+                                        index={reservation.treatment_id[0]}
+                                        set={(value) => handleInput('treatment_id', value)}
+                                    />
+                                    <div className='double-input'>
+                                        <InputGroup
+                                            name='Waktu Kunjungan'
+                                            type='time'
+                                            placeholder='Jam'
+                                            value={reservation.request_time}
+                                            set={(value) => handleInput('request_time', value)}
+                                        />
+                                        <InputGroup
+                                            name=''
+                                            type='date'
+                                            placeholder='Tanggal'
+                                            value={reservation.request_date}
+                                            set={(value) => handleInput('request_date', value)}
+                                        />
+                                    </div>
+                                    <InputGroup
+                                        name='Masalah Mulut'
+                                        type='text'
+                                        placeholder='Berikan keluhan mulut yang anda alami'
+                                        value={reservation.anamnesis}
+                                        set={(value) => handleInput('anamnesis', value)}
+                                    />
+                                </div>
+                                :
+                                <div className='form-body'>
+                                    <InputGroup
+                                        name='Cabang Klinik'
+                                        type='text'
+                                        placeholder='Pilih Cabang'
+                                        options={branches}
+                                        value={reservation.branch_id}
+                                        read={true}
+                                    />
+                                    <InputGroup
+                                        name='Layanan'
+                                        type='text'
+                                        placeholder='Pilih Layanan'
+                                        options={treatments}
+                                        value={reservation.treatment_id}
+                                        read={true}
+                                    />
+                                    <div className='double-input'>
+                                        <InputGroup
+                                            name='Waktu Kunjungan'
+                                            type='text'
+                                            placeholder='Jam'
+                                            value={reservation.request_time}
+                                            read={true}
+                                        />
+                                        <InputGroup
+                                            name=''
+                                            type='date'
+                                            placeholder='Tanggal'
+                                            value={reservation.request_date}
+                                            read={true}
+                                        />
+                                    </div>
+                                    <InputGroup
+                                        name='Masalah Mulut'
+                                        type='text'
+                                        placeholder='Berikan keluhan mulut yang anda alami'
+                                        value={reservation.anamnesis}
+                                        read={true}
+                                    />
+                                </div>
+                        }
                     </div>
                     {
-                        exam === 2 &&
+                        reservationId != null && reservationId.is_control == 0 && reservationId.status == 'Done' && reservationId.deposit_status == null &&
                         <div className='section'>
                             <h3>Pembayaran Deposit</h3>
                             <div className='form-body'>
@@ -690,6 +859,13 @@ const Forms = () => {
                                     options={banks}
                                     index={reservation.customer_bank[0]}
                                     set={(value) => handleInput('customer_bank', value)}
+                                />
+                                <InputGroup
+                                    name='Nomor Rekening'
+                                    type='number'
+                                    placeholder='Nomor Rekening Bank'
+                                    value={reservation.customer_bank_account}
+                                    set={(value) => handleInput('customer_bank_account', value)}
                                 />
                                 <InputGroup
                                     name='Nama Rekening'
@@ -722,23 +898,102 @@ const Forms = () => {
                             </div>
                         </div>
                     }
+                    {
+                        reservationId != null && reservationId.is_control == 0 && reservationId.status != 'Reservation' && reservationId.deposit_status != null &&
+                        <div className='section'>
+                            <h3>Pembayaran Deposit</h3>
+                            <div className='form-body'>
+                                <InputGroup
+                                    name='Bank Pengirim'
+                                    type='text'
+                                    placeholder='Pilih Bank'
+                                    options={banks}
+                                    value={reservation.customer_bank}
+                                    read={true}
+                                />
+                                <InputGroup
+                                    name='Nomor Rekening'
+                                    type='number'
+                                    placeholder='Nomor Rekening Bank'
+                                    value={reservation.customer_bank_account}
+                                    read={true}
+                                />
+                                <InputGroup
+                                    name='Nama Rekening'
+                                    type='text'
+                                    placeholder='Nama Rekening Bank'
+                                    value={reservation.customer_bank_account_name}
+                                    read={true}
+                                />
+                                <InputGroup
+                                    name='Jumlah Deposit'
+                                    type='text'
+                                    placeholder='Rp'
+                                    value={`Rp ${convertRp(reservation.deposit)}`}
+                                    read={true}
+                                />
+                                <InputGroup
+                                    name='Tanggal Pembayaran'
+                                    type='date'
+                                    placeholder='Atur Tanggal'
+                                    value={reservation.transfer_date}
+                                    read={true}
+                                />
+                                <a className='view-image input-group' href={`${process.env.REACT_APP_BE_URL}${reservation.deposit_receipt}`} target='_blank'>
+                                    <InputGroup
+                                        name='Bukti Pembayaran'
+                                        label='Lihat Bukti'
+                                        type='file'
+                                    />
+                                </a>
+                            </div>
+                        </div>
+                    }
                 </div>
                 <div className='form-footer'>
                     <div className='payment-info'>
                         <label>Rekening Pembayaran</label>
                         <p>BCA : 8631216161 (PT. Beaudent Medika Indonesia)</p>
                     </div>
-                    <div className='btn-group'>
-                        <button className='form-button' onClick={() => {
-                            navigate('/services', {
-                                state: {
-                                    member: login,
-                                    creds: user
-                                }
-                            })
-                        }}>Kembali</button>
-                        <button className='form-button on' onClick={saveData}>Reservasi</button>
-                    </div>
+                    {
+                        reservationId == null &&
+                        <div className='btn-group'>
+                            <button className='form-button' onClick={() => {
+                                navigate('/services', {
+                                    state: {
+                                        member: login,
+                                        creds: user
+                                    }
+                                })
+                            }}>Kembali</button>
+                            <button className='form-button on' onClick={saveData}>Reservasi</button>
+                        </div>
+                    }
+                    {
+                        reservationId != null && reservationId.status == 'Done' && reservationId.deposit_status == null &&
+                        <div className='btn-group'>
+                            <button className='form-button' onClick={() => {
+                                navigate('/credential')
+                            }}>Kembali</button>
+                            <button className='form-button on' onClick={(saveData)}>Bayar Deposit</button>
+                        </div>
+                    }
+                    {
+                        reservationId != null && reservationId.status != 'Done' &&
+                        <div className='btn-group'>
+                            <button className='form-button' onClick={() => {
+                                navigate('/credential')
+                            }}>Kembali</button>
+                        </div>
+                    }
+                    {
+                        reservationId != null && reservationId.status == 'Done' && reservationId.deposit_status != null &&
+                        <div className='btn-group'>
+                            <button className='form-button' onClick={() => {
+                                navigate('/credential')
+                            }}>Kembali</button>
+                        </div>
+                    }
                 </div >
             </>
         );
@@ -766,7 +1021,65 @@ const Forms = () => {
                             :
                             <header className='reservation'>
                                 <h2 className='form-title'>{title}</h2>
-                                <p>Mohon periksa kembali data formulir reservasi anda</p>
+                                {
+                                    reservationId == null &&
+                                    <p>Mohon periksa kembali data formulir reservasi anda</p>
+                                }
+                                {
+                                    reservationId != null && reservationId.deposit_status == null &&
+                                    <div className='status-group'>
+                                        <div className='status-box'>
+                                            <label>Reservasi : </label>
+                                            {
+                                                reservationId.status == 'Reservation' &&
+                                                <p className='wait'>Menunggu Konfirmasi</p>
+                                            }
+                                            {
+                                                reservationId.status == 'Cancel' &&
+                                                <p className='fail'>Dibatalkan</p>
+                                            }
+                                            {
+                                                reservationId.status == 'Done' &&
+                                                <p className='success'>Dikonfirmasi</p>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                {
+                                    reservationId != null && reservationId.deposit_status != null &&
+                                    <div className='status-group'>
+                                        <div className='status-box'>
+                                            <label>Reservasi : </label>
+                                            {
+                                                reservationId.status == 'Reservation' &&
+                                                <p className='wait'>Menunggu Konfirmasi</p>
+                                            }
+                                            {
+                                                reservationId.status == 'Cancel' &&
+                                                <p className='fail'>Dibatalkan</p>
+                                            }
+                                            {
+                                                reservationId.status == 'Done' &&
+                                                <p className='success'>Dikonfirmasi</p>
+                                            }
+                                        </div>
+                                        <div className='status-box'>
+                                            <label>Deposit : </label>
+                                            {
+                                                reservationId.deposit_status == 'Waiting' &&
+                                                <p className='wait'>Menunggu Konfirmasi</p>
+                                            }
+                                            {
+                                                reservationId.deposit_status == 'Decline' &&
+                                                <p className='fail'>Dibatalkan</p>
+                                            }
+                                            {
+                                                reservationId.deposit_status == 'Confirm' &&
+                                                <p className='success'>Dikonfirmasi</p>
+                                            }
+                                        </div>
+                                    </div>
+                                }
                                 <img src={require('../assets/images/logo.jpg')} alt='Beaudent Logo' draggable='false' />
                             </header>
                     }
@@ -837,7 +1150,7 @@ const Forms = () => {
                         <div className='icon'>
                             <box-icon type='regular' name='mail-send' size='64px' color='white'></box-icon>
                         </div>
-                        <p>Kami akan mengirimkan nomor antrian melalui email anda. Mohon pantau email anda secara berkala.</p>
+                        <p>Kami akan mengirimkan konfirmasi melalui email anda. Mohon pantau email anda secara berkala.</p>
                     </div>
                     <div className='card'>
                         <div className='agreement'>
@@ -850,11 +1163,27 @@ const Forms = () => {
                                 <p>Saya telah membaca dan menyetujui <a href={require('../assets/docs/terms-and-agreement.pdf')} download>syarat dan ketentuan</a> reservasi dari Beaudent</p>
                             </div>
                         </div>
-                        <div className='btn-group'>
-                            <button className='form-button' onClick={() => setModal(0)}>Batal</button>
-                            <button className='form-button on' onClick={doReservation}>Kirim</button>
-                        </div>
+                        {
+                            reservationId == null &&
+                            <div className='btn-group'>
+                                <button className='form-button' onClick={() => setModal(0)}>Batal</button>
+                                <button className='form-button on' onClick={doReservation}>Kirim</button>
+                            </div>
+                        }
+                        {
+                            reservationId != null && reservationId.deposit_status == null &&
+                            <div className='btn-group'>
+                                <button className='form-button' onClick={() => setModal(0)}>Batal</button>
+                                <button className='form-button on' onClick={doDeposit}>Kirim</button>
+                            </div>
+                        }
                     </div>
+                </div>
+            </div>
+
+            <div className={`modal loading ${loading === 1 && 'active'}`}>
+                <div className='spinner'>
+                    <box-icon type='regular' name='loader-circle' size='48px' color='rgb(255, 116, 142)'></box-icon>
                 </div>
             </div>
         </div>
