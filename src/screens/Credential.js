@@ -1,6 +1,6 @@
 import axios from 'axios';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import ErrorBox from '../components/ErrorBox';
 
 const Credential = () => {
@@ -8,11 +8,15 @@ const Credential = () => {
     const [creds, setCreds] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(0);
+    const [searchCreds, setSearchCreds] = useSearchParams();
 
-    const login = async () => {
+    const login = async (param_creds = '') => {
         setLoading(1);
+        if (creds != '') {
+            param_creds = creds;
+        };
         await axios.post(`${process.env.REACT_APP_API_URL}customer`, {
-            creds: creds
+            creds: param_creds
         }, {
             headers: {
                 'Accept': 'application/json',
@@ -51,6 +55,10 @@ const Credential = () => {
             setError('Terjadi Masalah Saat Mengirim Data');
         });
     };
+
+    useEffect(() => {
+        searchCreds.get('creds') && login(searchCreds.get('creds'));
+    }, []);
 
     return (
         <div className='page'>
