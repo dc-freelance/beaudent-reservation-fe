@@ -53,6 +53,10 @@
     border: none !important;
 }
 
+.css-igs3ac {
+    border: none !important;
+}
+
 @media(max-width: 500px) {
     input {
         min-width: 275px !important;
