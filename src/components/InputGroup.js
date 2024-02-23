@@ -45,7 +45,7 @@ const InputGroup = (props) => {
 
 
     // Limit Input Hours
-    const [selectedTime, setSelectedTime] = useState(new Date());
+    const [selectedTime, setSelectedTime] = useState('');
     const { startOfHour, setHours, setMinutes, parse, format } = require('date-fns');
     const start = startOfHour(setHours(new Date(), 9));
     const end = setMinutes(setHours(new Date(), 20), 30);

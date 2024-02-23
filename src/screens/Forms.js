@@ -387,6 +387,7 @@ const Forms = () => {
                     request_time: customerRes.request_time,
                     is_control: customerRes.is_control,
                     anamnesis: customerRes.anamnesis,
+                    deposit: customerRes.branches.deposit_minimum
                 });
 
                 if (customerRes.deposit_status != null) {
@@ -887,8 +888,9 @@ const Forms = () => {
                                     name='Jumlah Deposit'
                                     type='number'
                                     placeholder='Rp'
-                                    value={reservation.deposit}
-                                    set={(value) => handleInput('deposit', value)}
+                                    mark='*'
+                                    value={`Rp ${reservation.deposit && convertRp(reservation.deposit)}`}
+                                    read={true}
                                 />
                                 <InputGroup
                                     name='Tanggal Pembayaran'
@@ -960,6 +962,10 @@ const Forms = () => {
                     }
                 </div>
                 <div className='form-footer'>
+                    {
+                        reservationId != null && reservationId.status == 'Done' && reservationId.deposit_status == null &&
+                        <p style={{ marginTop: -32, marginBottom: 24 }}>*Harap membayar deposit sesuai dengan jumlah yang telah ditentukan</p>
+                    }
                     {
                         reservationId == null &&
                         <div className='btn-group'>
