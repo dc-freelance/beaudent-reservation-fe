@@ -533,6 +533,10 @@ input[type='file']~label {
     }
 }
 
+.input-mark {
+    color: rgb(255, 0, 0);
+}
+
 /* End of Third Type Screen (Reservation) */
 
 @media(max-width: 900px) {

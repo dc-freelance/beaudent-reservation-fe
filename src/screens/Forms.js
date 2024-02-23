@@ -476,12 +476,12 @@ const Forms = () => {
 
         if (form === 1) {
             setTitle('Daftarkan Diri Anda')
-            setInputInfo('*Wajib Diisi');
+            setInputInfo('Wajib Diisi');
         };
 
         if (form === 2) {
             setTitle('Bagaimana Kami Menghubungi Anda?')
-            setInputInfo('*Wajib Diisi');
+            setInputInfo('Wajib Diisi');
         };
 
         if (form === 3) {
@@ -588,7 +588,7 @@ const Forms = () => {
                     />
                 </div>
                 <div className='form-footer'>
-                    <p>{inputInfo}</p>
+                    <p><span className='input-mark'>*</span>{inputInfo}</p>
 
                     <div className='btn-group'>
                         {
@@ -683,7 +683,7 @@ const Forms = () => {
                     </div>
                 </div>
                 <div className='form-footer'>
-                    <p>{inputInfo}</p>
+                    <p><span className='input-mark'>*</span>{inputInfo}</p>
 
                     <div className='btn-group'>
                         <button className='form-button' onClick={() => saveData(0)}>Kembali</button>
@@ -964,7 +964,7 @@ const Forms = () => {
                 <div className='form-footer'>
                     {
                         reservationId != null && reservationId.status == 'Done' && reservationId.deposit_status == null &&
-                        <p style={{ marginTop: -32, marginBottom: 24 }}>*Harap membayar deposit sesuai dengan jumlah yang telah ditentukan</p>
+                        <p style={{ marginTop: -32, marginBottom: 24 }}><span className='input-mark'>*</span>Harap membayar deposit sesuai dengan jumlah yang telah ditentukan</p>
                     }
                     {
                         reservationId == null &&

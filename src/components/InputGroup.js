@@ -54,7 +54,7 @@ const InputGroup = (props) => {
 
     return (
         <div className='input-group'>
-            <label>{props.name}{props.mark}</label>
+            <label>{props.name}<span className='input-mark'>{props.mark}</span></label>
             {
                 props.type === 'select' &&
                 <Select
