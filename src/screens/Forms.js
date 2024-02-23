@@ -387,7 +387,7 @@ const Forms = () => {
                     request_time: customerRes.request_time,
                     is_control: customerRes.is_control,
                     anamnesis: customerRes.anamnesis,
-                    deposit: customerRes.branches.deposit_minimum
+                    deposit: customerRes.branches.deposit_minimum && customerRes.branches.deposit_minimum.split('.')[0]
                 });
 
                 if (customerRes.deposit_status != null) {
