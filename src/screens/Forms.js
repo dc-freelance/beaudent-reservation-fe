@@ -886,7 +886,7 @@ const Forms = () => {
                                 />
                                 <InputGroup
                                     name='Jumlah Deposit'
-                                    type='number'
+                                    type='text'
                                     placeholder='Rp'
                                     mark='*'
                                     value={`Rp ${reservation.deposit && convertRp(reservation.deposit)}`}
