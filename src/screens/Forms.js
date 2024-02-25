@@ -123,7 +123,6 @@ const Forms = () => {
         customer_bank_account_name: '',
         customer_bank_account: '',
         deposit: '',
-        deposit_status: '',
         transfer_date: '',
         deposit_receipt: '',
         is_control: ''
@@ -390,7 +389,7 @@ const Forms = () => {
                     deposit: customerRes.branches.deposit_minimum && customerRes.branches.deposit_minimum.split('.')[0]
                 });
 
-                if (customerRes.deposit_status != null) {
+                if (customerRes.status != 'Waiting Deposit') {
                     setReservation({
                         branch_id: customerRes.branches.name,
                         treatment_id: customerRes.treatments.name,
@@ -404,7 +403,6 @@ const Forms = () => {
                         deposit: customerRes.deposit,
                         deposit_receipt: customerRes.deposit_receipt,
                         transfer_date: customerRes.transfer_date,
-                        deposit_status: customerRes.deposit_status
                     });
                 };
             };
@@ -858,7 +856,7 @@ const Forms = () => {
                         }
                     </div>
                     {
-                        reservationId != null && reservationId.is_control == 0 && reservationId.status == 'Done' && reservationId.deposit_status == null &&
+                        reservationId != null && reservationId.is_control == 0 && reservationId.status == 'Waiting Deposit' &&
                         <div className='section'>
                             <h3>Pembayaran Deposit</h3>
                             <div className='form-body'>
@@ -910,7 +908,7 @@ const Forms = () => {
                         </div>
                     }
                     {
-                        reservationId != null && reservationId.is_control == 0 && reservationId.status != 'Reservation' && reservationId.deposit_status != null &&
+                        reservationId != null && reservationId.is_control == 0 && reservationId.status != 'Pending' && reservationId.status != 'Waiting Deposit' &&
                         <div className='section'>
                             <h3>Pembayaran Deposit</h3>
                             <div className='form-body'>
@@ -963,7 +961,7 @@ const Forms = () => {
                 </div>
                 <div className='form-footer'>
                     {
-                        reservationId != null && reservationId.status == 'Done' && reservationId.deposit_status == null &&
+                        reservationId != null && reservationId.status == 'Waiting Deposit' &&
                         <p style={{ marginTop: -32, marginBottom: 24 }}><span className='input-mark'>*</span>Harap membayar deposit sesuai dengan jumlah yang telah ditentukan</p>
                     }
                     {
@@ -981,14 +979,14 @@ const Forms = () => {
                         </div>
                     }
                     {
-                        reservationId != null && reservationId.status == 'Done' && reservationId.deposit_status == null &&
+                        reservationId != null && reservationId.status != 'Pending' &&
                         <div className='payment-info'>
                             <label>Rekening Pembayaran</label>
                             <p>BCA : 8631216161 (PT. Beaudent Medika Indonesia)</p>
                         </div>
                     }
                     {
-                        reservationId != null && reservationId.status == 'Done' && reservationId.deposit_status == null &&
+                        reservationId != null && reservationId.status == 'Waiting Deposit' &&
                         <div className='btn-group'>
                             <button className='form-button' onClick={() => {
                                 navigate('/credential')
@@ -997,22 +995,7 @@ const Forms = () => {
                         </div>
                     }
                     {
-                        reservationId != null && reservationId.status != 'Done' &&
-                        <div className='btn-group'>
-                            <button className='form-button' onClick={() => {
-                                navigate('/credential')
-                            }}>Kembali</button>
-                        </div>
-                    }
-                    {
-                        reservationId != null && reservationId.status == 'Done' && reservationId.deposit_status != null &&
-                        <div className='payment-info'>
-                            <label>Rekening Pembayaran</label>
-                            <p>BCA : 8631216161 (PT. Beaudent Medika Indonesia)</p>
-                        </div>
-                    }
-                    {
-                        reservationId != null && reservationId.status == 'Done' && reservationId.deposit_status != null &&
+                        reservationId != null && reservationId.status != 'Waiting Deposit' &&
                         <div className='btn-group'>
                             <button className='form-button' onClick={() => {
                                 navigate('/credential')
@@ -1047,63 +1030,36 @@ const Forms = () => {
                             <header className='reservation'>
                                 <h2 className='form-title'>{title}</h2>
                                 {
-                                    reservationId == null &&
-                                    <p>Mohon periksa kembali data formulir reservasi anda</p>
-                                }
-                                {
-                                    reservationId != null && reservationId.deposit_status == null &&
-                                    <div className='status-group'>
-                                        <div className='status-box'>
-                                            <label>Reservasi : </label>
-                                            {
-                                                reservationId.status == 'Reservation' &&
-                                                <p className='wait'>Menunggu Konfirmasi</p>
-                                            }
-                                            {
-                                                reservationId.status == 'Cancel' &&
-                                                <p className='fail'>Dibatalkan</p>
-                                            }
-                                            {
-                                                reservationId.status == 'Done' &&
-                                                <p className='success'>Dikonfirmasi</p>
-                                            }
+                                    reservationId == null ?
+                                        <p>Mohon periksa kembali data formulir reservasi anda</p>
+                                        :
+                                        <div className='status-group'>
+                                            <div className='status-box'>
+                                                <label>Status Saat Ini : </label>
+                                                {
+                                                    reservationId.status == 'Pending' &&
+                                                    <p className='wait'>Menunggu Konfirmasi</p>
+                                                }
+                                                {
+                                                    reservationId.status == 'Waiting Deposit' &&
+                                                    <p className='wait'>Menunggu Pembayaran</p>
+                                                }
+                                                {
+                                                    reservationId.status == 'Pending Deposit' &&
+                                                    <p className='wait'>Menunggu Konfirmasi Deposit</p>
+                                                }
+                                                {
+                                                    reservationId.status == 'Cancel' &&
+                                                    <p className='fail'>Dibatalkan</p>
+                                                }
+                                                {
+                                                    reservationId.status == 'Confirm' || reservationId.status == 'Examination' || reservationId.status == 'Billing' || reservationId.status == 'Done' ?
+                                                        <p className='success'>Dikonfirmasi</p>
+                                                        :
+                                                        null
+                                                }
+                                            </div>
                                         </div>
-                                    </div>
-                                }
-                                {
-                                    reservationId != null && reservationId.deposit_status != null &&
-                                    <div className='status-group'>
-                                        <div className='status-box'>
-                                            <label>Reservasi : </label>
-                                            {
-                                                reservationId.status == 'Reservation' &&
-                                                <p className='wait'>Menunggu Konfirmasi</p>
-                                            }
-                                            {
-                                                reservationId.status == 'Cancel' &&
-                                                <p className='fail'>Dibatalkan</p>
-                                            }
-                                            {
-                                                reservationId.status == 'Done' &&
-                                                <p className='success'>Dikonfirmasi</p>
-                                            }
-                                        </div>
-                                        <div className='status-box'>
-                                            <label>Deposit : </label>
-                                            {
-                                                reservationId.deposit_status == 'Waiting' &&
-                                                <p className='wait'>Menunggu Konfirmasi</p>
-                                            }
-                                            {
-                                                reservationId.deposit_status == 'Decline' &&
-                                                <p className='fail'>Dibatalkan</p>
-                                            }
-                                            {
-                                                reservationId.deposit_status == 'Confirm' &&
-                                                <p className='success'>Dikonfirmasi</p>
-                                            }
-                                        </div>
-                                    </div>
                                 }
                                 <img src={require('../assets/images/logo.jpg')} alt='Beaudent Logo' draggable='false' />
                             </header>
