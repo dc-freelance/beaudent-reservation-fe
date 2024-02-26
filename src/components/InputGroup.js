@@ -110,6 +110,10 @@ const InputGroup = (props) => {
                 </LocalizationProvider>
             }
             {
+                props.name == 'Nomor Whatsapp' &&
+                <div className='label-on-field'>+62</div>
+            }
+            {
                 props.type !== 'select' && props.type !== 'textarea' && props.type !== 'file' && props.type !== 'time' &&
                 <input
                     type={props.type}

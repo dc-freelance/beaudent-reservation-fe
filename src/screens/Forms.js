@@ -656,9 +656,9 @@ const Forms = () => {
                 <div className='form-body'>
                     <div className='form-col'>
                         <InputGroup
-                            name='Nomor Telepon'
+                            name='Nomor Whatsapp'
                             type='number'
-                            placeholder='No Telepon / Whatsapp'
+                            placeholder='8XXXXXXXXXX'
                             mark='*'
                             value={contact.phone_number}
                             set={(value) => handleInput('phone_number', value)}
