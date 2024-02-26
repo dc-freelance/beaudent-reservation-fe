@@ -658,7 +658,7 @@ const Forms = () => {
                         <InputGroup
                             name='Nomor Whatsapp'
                             type='number'
-                            placeholder='8XXXXXXXXXX'
+                            placeholder='Masukkan Nomor Whatsapp'
                             mark='*'
                             value={contact.phone_number}
                             set={(value) => handleInput('phone_number', value)}
