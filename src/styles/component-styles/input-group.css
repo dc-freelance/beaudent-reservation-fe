@@ -57,6 +57,10 @@
     border: none !important;
 }
 
+.MuiInputBase-inputAdornedEnd {
+    transform: translateY(31px) !important;
+}
+
 @media(max-width: 500px) {
     input {
         min-width: 275px !important;
