@@ -337,6 +337,12 @@ button {
     }
 }
 
+.already-reserve .double-input {
+    .input-group:nth-child(2) input {
+        transform: translateY(31px);
+    }
+}
+
 /* End of Second Type Screen (Form) */
 
 /* Start of Third Type Screen (Reservation) */

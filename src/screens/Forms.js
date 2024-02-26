@@ -447,6 +447,29 @@ const Forms = () => {
 
 
 
+    // Get Shift
+
+    const [shift, setShift] = useState({
+        start_h: '',
+        start_m: '',
+        end_h: '',
+        end_m: ''
+    });
+    const getShift = async () => {
+        try {
+            const response = await axios.get(`${process.env.REACT_APP_API_URL}shift`);
+            setShift({
+                start_h: response.data.start_h,
+                start_m: response.data.start_m,
+                end_h: response.data.end_h,
+                end_m: response.data.end_m
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+
     // IDR Currency
     const convertRp = (val) => {
         let final;
@@ -469,6 +492,7 @@ const Forms = () => {
         checkService();
         getBranches();
         getTreatments();
+        getShift();
 
         // Setting Title and Message
 
@@ -790,17 +814,21 @@ const Forms = () => {
                                     <div className='double-input'>
                                         <InputGroup
                                             name='Waktu Kunjungan'
-                                            type='time'
-                                            placeholder='Jam'
-                                            value={reservation.request_time}
-                                            set={(value) => handleInput('request_time', value)}
-                                        />
-                                        <InputGroup
-                                            name=''
                                             type='date'
                                             placeholder='Tanggal'
                                             value={reservation.request_date}
                                             set={(value) => handleInput('request_date', value)}
+                                        />
+                                        <InputGroup
+                                            name=''
+                                            type='time'
+                                            placeholder='Jam'
+                                            start_h={shift.start_h}
+                                            start_m={shift.start_m}
+                                            end_h={shift.end_h}
+                                            end_m={shift.end_m}
+                                            value={reservation.request_time}
+                                            set={(value) => handleInput('request_time', value)}
                                         />
                                     </div>
                                     <InputGroup
@@ -812,7 +840,7 @@ const Forms = () => {
                                     />
                                 </div>
                                 :
-                                <div className='form-body'>
+                                <div className='form-body already-reserve'>
                                     <InputGroup
                                         name='Cabang Klinik'
                                         type='text'
@@ -832,16 +860,16 @@ const Forms = () => {
                                     <div className='double-input'>
                                         <InputGroup
                                             name='Waktu Kunjungan'
-                                            type='text'
-                                            placeholder='Jam'
-                                            value={reservation.request_time}
+                                            type='date'
+                                            placeholder='Tanggal'
+                                            value={reservation.request_date}
                                             read={true}
                                         />
                                         <InputGroup
                                             name=''
-                                            type='date'
-                                            placeholder='Tanggal'
-                                            value={reservation.request_date}
+                                            type='text'
+                                            placeholder='Jam'
+                                            value={reservation.request_time}
                                             read={true}
                                         />
                                     </div>

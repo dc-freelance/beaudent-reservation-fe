@@ -42,7 +42,9 @@
 }
 
 @media(max-width: 750px) {
-    .box-option {
+
+    .box-option,
+    .skeleton {
         width: 200px;
         height: 200px;
 
