@@ -989,7 +989,7 @@ const Forms = () => {
                 </div>
                 <div className='form-footer'>
                     {
-                        reservationId != null && reservationId.status == 'Waiting Deposit' &&
+                        reservationId != null && reservationId.is_control == 0 && reservationId.status == 'Waiting Deposit' &&
                         <p style={{ marginTop: -32, marginBottom: 24 }}><span className='input-mark'>*</span>Harap membayar deposit sesuai dengan jumlah yang telah ditentukan</p>
                     }
                     {
@@ -1007,14 +1007,14 @@ const Forms = () => {
                         </div>
                     }
                     {
-                        reservationId != null && reservationId.status != 'Pending' &&
+                        reservationId != null && reservationId.is_control == 0 && reservationId.status != 'Pending' &&
                         <div className='payment-info'>
                             <label>Rekening Pembayaran</label>
                             <p>BCA : 8631216161 (PT. Beaudent Medika Indonesia)</p>
                         </div>
                     }
                     {
-                        reservationId != null && reservationId.status == 'Waiting Deposit' &&
+                        reservationId != null && reservationId.is_control == 0 && reservationId.status == 'Waiting Deposit' &&
                         <div className='btn-group'>
                             <button className='form-button' onClick={() => {
                                 navigate('/credential')

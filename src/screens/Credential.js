@@ -56,8 +56,20 @@ const Credential = () => {
         });
     };
 
+    const isBase64 = (str) => {
+        if (str === '' || str.trim() === '') {
+            return false;
+        };
+
+        try {
+            return btoa(atob(str)) == str;
+        } catch (err) {
+            return false;
+        };
+    };
+
     useEffect(() => {
-        searchCreds.get('creds') && login(searchCreds.get('creds'));
+        searchCreds.get('creds') && login(isBase64(searchCreds.get('creds')) === true ? atob(searchCreds.get('creds')) : searchCreds.get('creds'));
     }, []);
 
     return (
