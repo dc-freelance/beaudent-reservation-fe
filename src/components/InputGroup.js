@@ -119,6 +119,7 @@ const InputGroup = (props) => {
                     type={props.type}
                     placeholder={props.placeholder}
                     defaultValue={props.value}
+                    min={props.min}
                     onChange={event => props.set(event.target.value)}
                     readOnly={props.read}
                 />

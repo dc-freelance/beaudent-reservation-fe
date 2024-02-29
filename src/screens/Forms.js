@@ -816,6 +816,7 @@ const Forms = () => {
                                             name='Waktu Kunjungan'
                                             type='date'
                                             placeholder='Tanggal'
+                                            min={new Date().toISOString().split('T')[0]}
                                             value={reservation.request_date}
                                             set={(value) => handleInput('request_date', value)}
                                         />
