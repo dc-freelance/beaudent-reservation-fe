@@ -272,6 +272,7 @@ const Forms = () => {
                         'Terjadi Masalah Saat Mengirim Data'
                     ]
                 });
+                setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
             })
         } else {
             setErrors({
@@ -381,13 +382,19 @@ const Forms = () => {
                 setReservation({
                     ...reservation,
                     branch_id: customerRes.branches.name,
-                    treatment_id: customerRes.treatments.name,
                     request_date: customerRes.request_date,
                     request_time: customerRes.request_time,
                     is_control: customerRes.is_control,
                     anamnesis: customerRes.anamnesis,
                     deposit: customerRes.branches.deposit_minimum && customerRes.branches.deposit_minimum.split('.')[0]
                 });
+
+                if (customerRes.treatments != null) {
+                    setReservation({
+                        ...reservation,
+                        treatment_id: customerRes.treatments.name,
+                    });
+                };
 
                 if (customerRes.status != 'Waiting Deposit') {
                     setReservation({
