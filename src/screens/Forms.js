@@ -267,12 +267,9 @@ const Forms = () => {
             }).catch(err => {
                 console.log(err);
                 setLoading(0);
-                setErrors({
-                    error: [
-                        'Terjadi Masalah Saat Mengirim Data'
-                    ]
-                });
-                setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
+                let error = { error: ['Terjadi Masalah Saat Mengirim Data'] };
+                setErrors({ error });
+                setTotalErrors(Object.values(error).reduce((acc, arr) => acc + arr.length, 0));
             })
         } else {
             setErrors({
@@ -379,6 +376,12 @@ const Forms = () => {
 
             if (reservationId != null) {
                 const customerRes = data.reservations[data.reservations.length - 1];
+
+                let treatment_name = '';
+                if (customerRes.treatments != null) {
+                    treatment_name = customerRes.treatments.name;
+                };
+
                 setReservation({
                     ...reservation,
                     branch_id: customerRes.branches.name,
@@ -386,15 +389,9 @@ const Forms = () => {
                     request_time: customerRes.request_time,
                     is_control: customerRes.is_control,
                     anamnesis: customerRes.anamnesis,
+                    treatment_id: treatment_name,
                     deposit: customerRes.branches.deposit_minimum && customerRes.branches.deposit_minimum.split('.')[0]
                 });
-
-                if (customerRes.treatments != null) {
-                    setReservation({
-                        ...reservation,
-                        treatment_id: customerRes.treatments.name,
-                    });
-                };
 
                 if (customerRes.status != 'Waiting Deposit') {
                     setReservation({
