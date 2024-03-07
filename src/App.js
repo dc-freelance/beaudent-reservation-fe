@@ -23,7 +23,7 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path='/' element={<Index />}></Route>
+        <Route path='/reservasi' element={<Index />}></Route>
         <Route path='/services' element={<ServiceOption />}></Route>
         <Route path='/credential' element={<Credential />}></Route>
         <Route path='/menu' element={<Menu />}></Route>
