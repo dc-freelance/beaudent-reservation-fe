@@ -19,18 +19,25 @@ const Forms = () => {
     const { state } = useLocation();
     const [exam, setExam] = useState(0);
     const [login, setLogin] = useState(false);
+    const [fromMenu, setFromMenu] = useState(false);
+
     const [user, setUser] = useState('');
-    const [reservationId, setReservationId] = useState([]);
+    const [noRes, setNoRes] = useState('');
+    const [data, setData] = useState([]);
+
     const [loading, setLoading] = useState(0);
-    const [auth, setAuth] = useState([]);
 
     const checkService = () => {
         if (state) {
-            const { examination, member, creds, reservation } = state;
+            const { menu, examination, member, creds, reservation } = state;
             setExam(examination);
-            member === true && setForm(4);
-            setReservationId(reservation);
-            setUserData();
+            if (member === true) {
+                setForm(4);
+            };
+
+            setNoRes(reservation);
+
+            setFromMenu(menu);
             setLogin(member);
             setUser(creds);
         } else {
@@ -148,8 +155,8 @@ const Forms = () => {
 
     // Registration API
 
-    const doRegist = async (agree) => {
-        if (agree === 1) {
+    const doRegist = async () => {
+        if (regAgree === 1) {
             setLoading(1);
             await axios.post(`${process.env.REACT_APP_API_URL}registration`, {
                 identity_number: profile.identity_number,
@@ -183,31 +190,10 @@ const Forms = () => {
                     setForm(4);
                     setRegConfirm(0);
 
-                    let marrit = '';
-                    if (data.marrital_status === 'Single') {
-                        marrit = 'Belum Menikah';
-                    };
-                    if (data.marrital_status === 'Married') {
-                        marrit = 'Menikah';
-                    };
-                    if (data.marrital_status === 'Divorved') {
-                        marrit = 'Kawin Cerai';
-                    };
-
-                    setProfile({
-                        ...profile,
-                        id: data.id,
-                        religion: data.religion,
-                        gender: data.gender === 'Male' ? 'Laki-Laki' : 'Perempuan',
-                        marrital_status: marrit
-                    });
-                    navigate('/reservation', {
-                        state: {
-                            examination: exam,
-                            member: true,
-                            creds: contact.phone_number
-                        }
-                    });
+                    setUser(data.phone_number);
+                    setLogin(true);
+                    setExam(exam);
+                    setUserData();
                 };
             }).catch(err => {
                 console.log(err);
@@ -259,11 +245,23 @@ const Forms = () => {
                     setErrors(result.data.error);
                     setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
                 } else {
-                    navigate('/reservasi', {
-                        state: {
-                            message: 'Anda Telah Melakukan Reservasi'
-                        }
-                    });
+                    if (fromMenu == true) {
+                        navigate('/menu', {
+                            state: {
+                                message: 'Anda Telah Melakukan Reservasi',
+                                member: login,
+                                creds: user
+                            }
+                        });
+                    } else {
+                        navigate('/reservasi', {
+                            state: {
+                                message: 'Anda Telah Melakukan Reservasi',
+                                member: login,
+                                creds: result.data.phone
+                            }
+                        });
+                    };
                 };
             }).catch(err => {
                 console.log(err);
@@ -289,7 +287,7 @@ const Forms = () => {
         if (agree === 1) {
             setLoading(1);
             await axios.post(`${process.env.REACT_APP_API_URL}deposit`, {
-                id: reservationId.id,
+                id: data.id,
                 deposit: reservation.deposit,
                 deposit_receipt: reservation.deposit_receipt,
                 customer_bank: reservation.customer_bank[1],
@@ -307,9 +305,11 @@ const Forms = () => {
                     setErrors(result.data.error);
                     setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
                 } else {
-                    navigate('/reservasi', {
+                    navigate('/menu', {
                         state: {
-                            message: 'Anda Telah Membayar Deposit'
+                            message: 'Anda Telah Membayar Deposit',
+                            member: login,
+                            creds: user
                         }
                     });
                 };
@@ -336,6 +336,7 @@ const Forms = () => {
     // Set user data
 
     const setUserData = async () => {
+        setLoading(1);
         await axios.post(`${process.env.REACT_APP_API_URL}customer`, {
             creds: user
         }, {
@@ -344,73 +345,89 @@ const Forms = () => {
                 'Content-Type': 'multipart/form-data'
             }
         }).then(result => {
-            setAuth(result.data.customer);
-
-            const data = result.data.customer;
+            const result_data = result.data.customer;
 
             let marrit = '';
-            if (data.marrital_status === 'Single') {
+            if (result_data.marrital_status === 'Single') {
                 marrit = 'Belum Menikah';
             };
-            if (data.marrital_status === 'Married') {
+            if (result_data.marrital_status === 'Married') {
                 marrit = 'Menikah';
             };
-            if (data.marrital_status === 'Divorved') {
+            if (result_data.marrital_status === 'Divorved') {
                 marrit = 'Kawin Cerai';
             };
 
             setProfile({
-                id: data.id,
-                identity_number: data.identity_number,
-                name: data.name,
-                place_of_birth: data.place_of_birth,
-                date_of_birth: data.date_of_birth,
-                gender: data.gender === 'Male' ? 'Laki-Laki' : 'Perempuan',
-                religion: data.religion,
+                id: result_data.id,
+                identity_number: result_data.identity_number,
+                name: result_data.name,
+                place_of_birth: result_data.place_of_birth,
+                date_of_birth: result_data.date_of_birth,
+                gender: result_data.gender === 'Male' ? 'Laki-Laki' : 'Perempuan',
+                religion: result_data.religion,
                 marrital_status: marrit,
-                occupation: data.occupation,
+                occupation: result_data.occupation,
             });
 
             setContact({
-                phone_number: data.phone_number,
-                email: data.email,
-                address: data.address,
+                phone_number: result_data.phone_number,
+                email: result_data.email,
+                address: result_data.address,
             });
 
-            if (reservationId != null) {
-                let treatment_name = '';
-                if (reservationId.treatments != null) {
-                    treatment_name = reservationId.treatments.name;
-                };
+            setLoading(0);
+        }).catch(err => { });
+    };
 
-                setReservation({
-                    ...reservation,
-                    branch_id: reservationId.branches.name,
-                    request_date: reservationId.request_date,
-                    request_time: reservationId.request_time,
-                    is_control: reservationId.is_control,
-                    anamnesis: reservationId.anamnesis,
-                    treatment_id: treatment_name,
-                    deposit: reservationId.branches.deposit_minimum && reservationId.branches.deposit_minimum.split('.')[0]
-                });
 
-                if (reservationId.status != 'Waiting Deposit') {
-                    setReservation({
-                        branch_id: reservationId.branches.name,
-                        treatment_id: reservationId.treatments.name,
-                        request_date: reservationId.request_date,
-                        request_time: reservationId.request_time,
-                        is_control: reservationId.is_control,
-                        anamnesis: reservationId.anamnesis,
-                        customer_bank: reservationId.customer_bank,
-                        customer_bank_account_name: reservationId.customer_bank_account_name,
-                        customer_bank_account: reservationId.customer_bank_account,
-                        deposit: reservationId.deposit,
-                        deposit_receipt: reservationId.deposit_receipt,
-                        transfer_date: reservationId.transfer_date,
-                    });
-                };
+
+    // Get User Reservation
+
+    const setUserRes = async () => {
+        setLoading(1);
+        await axios.get(`${process.env.REACT_APP_API_URL}search-res/${noRes}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(result => {
+            const result_data = result.data.reservation;
+            setData(result_data);
+
+            let treatment_name = '';
+            if (result_data.treatments != null) {
+                treatment_name = result_data.treatments.name;
             };
+
+            setReservation({
+                ...reservation,
+                branch_id: result_data.branches.name,
+                request_date: result_data.request_date,
+                request_time: result_data.request_time,
+                is_control: result_data.is_control,
+                anamnesis: result_data.anamnesis,
+                treatment_id: treatment_name,
+                deposit: result_data.branches.deposit_minimum && result_data.branches.deposit_minimum.split('.')[0]
+            });
+
+            if (result_data.status != 'Waiting Deposit') {
+                setReservation({
+                    branch_id: result_data.branches.name,
+                    treatment_id: result_data.treatments.name,
+                    request_date: result_data.request_date,
+                    request_time: result_data.request_time,
+                    is_control: result_data.is_control,
+                    anamnesis: result_data.anamnesis,
+                    customer_bank: result_data.customer_bank,
+                    customer_bank_account_name: result_data.customer_bank_account_name,
+                    customer_bank_account: result_data.customer_bank_account,
+                    deposit: result_data.deposit,
+                    deposit_receipt: result_data.deposit_receipt,
+                    transfer_date: result_data.transfer_date,
+                });
+            };
+            setLoading(0);
         }).catch(err => { });
     };
 
@@ -470,7 +487,7 @@ const Forms = () => {
                 end_m: response.data.end_m
             });
 
-            if (reservationId == null) {
+            if (data == null) {
                 setReservation({
                     ...reservation,
                     request_time: response.data.start_h + ':' + response.data.start_m
@@ -502,9 +519,15 @@ const Forms = () => {
 
     useEffect(() => {
         checkService();
-        getBranches();
-        getTreatments();
-        getShift();
+        if (form === 4) {
+            getBranches();
+            getTreatments();
+            getShift();
+            setUserData();
+            if (noRes != '') {
+                setUserRes();
+            };
+        };
 
         // Setting Title and Message
 
@@ -742,7 +765,7 @@ const Forms = () => {
 
         return (
             <>
-                <div className='option-group'>
+                <div style={{ minHeight: '250px' }} className='option-group'>
                     <button className='box-option-btn' onClick={() => selectBox(0, 'browser')}>
                         <OptionBox img={require('../assets/images/google.jpg')} value='Browser' active={localSourceInfo[0] === 0 ? true : false} />
                     </button>
@@ -805,7 +828,7 @@ const Forms = () => {
                     <div className='section'>
                         <h3>Reservasi</h3>
                         {
-                            reservationId == null ?
+                            data == null ?
                                 <div className='form-body'>
                                     <InputGroup
                                         name='Cabang Klinik'
@@ -873,7 +896,7 @@ const Forms = () => {
                                     <div className='double-input'>
                                         <InputGroup
                                             name='Waktu Kunjungan'
-                                            type='date'
+                                            type='text'
                                             placeholder='Tanggal'
                                             value={reservation.request_date}
                                             read={true}
@@ -897,7 +920,7 @@ const Forms = () => {
                         }
                     </div>
                     {
-                        reservationId != null && reservationId.is_control == 0 && reservationId.status == 'Waiting Deposit' &&
+                        data != null && data.is_control == 0 && data.status == 'Waiting Deposit' &&
                         <div className='section'>
                             <h3>Pembayaran Deposit</h3>
                             <div className='form-body'>
@@ -949,7 +972,7 @@ const Forms = () => {
                         </div>
                     }
                     {
-                        reservationId != null && reservationId.is_control == 0 && reservationId.status != 'Pending' && reservationId.status != 'Waiting Deposit' &&
+                        data != null && data.is_control == 0 && data.status != 'Pending' && data.status != 'Waiting Deposit' &&
                         <div className='section'>
                             <h3>Pembayaran Deposit</h3>
                             <div className='form-body'>
@@ -984,7 +1007,7 @@ const Forms = () => {
                                 />
                                 <InputGroup
                                     name='Tanggal Pembayaran'
-                                    type='date'
+                                    type='text'
                                     placeholder='Atur Tanggal'
                                     value={reservation.transfer_date}
                                     read={true}
@@ -1002,15 +1025,16 @@ const Forms = () => {
                 </div>
                 <div className='form-footer'>
                     {
-                        reservationId != null && reservationId.is_control == 0 && reservationId.status == 'Waiting Deposit' &&
+                        data != null && data.is_control == 0 && data.status == 'Waiting Deposit' &&
                         <p style={{ marginTop: -32, marginBottom: 24 }}><span className='input-mark'>*</span>Harap membayar deposit sesuai dengan jumlah yang telah ditentukan</p>
                     }
                     {
-                        reservationId == null &&
+                        data == null &&
                         <div className='btn-group'>
                             <button className='form-button' onClick={() => {
                                 navigate('/services', {
                                     state: {
+                                        menu: fromMenu,
                                         member: login,
                                         creds: user
                                     }
@@ -1020,19 +1044,19 @@ const Forms = () => {
                         </div>
                     }
                     {
-                        reservationId != null && reservationId.is_control == 0 && reservationId.status != 'Pending' &&
+                        data != null && data.is_control == 0 && data.status != 'Pending' &&
                         <div className='payment-info'>
                             <label>Rekening Pembayaran</label>
                             <p>BCA : 8631216161 (PT. Beaudent Medika Indonesia)</p>
                         </div>
                     }
                     {
-                        reservationId != null && reservationId.is_control == 0 && reservationId.status == 'Waiting Deposit' &&
+                        data != null && data.is_control == 0 && data.status == 'Waiting Deposit' &&
                         <div className='btn-group'>
                             <button className='form-button' onClick={() => {
                                 navigate('/menu', {
                                     state: {
-                                        reservation: auth,
+                                        menu: fromMenu,
                                         member: login,
                                         creds: user
                                     }
@@ -1042,12 +1066,12 @@ const Forms = () => {
                         </div>
                     }
                     {
-                        reservationId != null && reservationId.status != 'Waiting Deposit' &&
+                        data != null && data.status != 'Waiting Deposit' &&
                         <div className='btn-group'>
                             <button className='form-button' onClick={() => {
                                 navigate('/menu', {
                                     state: {
-                                        reservation: auth,
+                                        menu: fromMenu,
                                         member: login,
                                         creds: user
                                     }
@@ -1083,30 +1107,30 @@ const Forms = () => {
                             <header className='reservation'>
                                 <h2 className='form-title'>{title}</h2>
                                 {
-                                    reservationId == null ?
+                                    data == null ?
                                         <p>Mohon periksa kembali data formulir reservasi anda</p>
                                         :
                                         <div className='status-group'>
                                             <div className='status-box'>
                                                 <label>Status Saat Ini : </label>
                                                 {
-                                                    reservationId.status == 'Pending' &&
+                                                    data.status == 'Pending' &&
                                                     <p className='wait'>Menunggu Konfirmasi</p>
                                                 }
                                                 {
-                                                    reservationId.status == 'Waiting Deposit' &&
+                                                    data.status == 'Waiting Deposit' &&
                                                     <p className='wait'>Menunggu Pembayaran</p>
                                                 }
                                                 {
-                                                    reservationId.status == 'Pending Deposit' &&
+                                                    data.status == 'Pending Deposit' &&
                                                     <p className='wait'>Menunggu Konfirmasi Deposit</p>
                                                 }
                                                 {
-                                                    reservationId.status == 'Cancel' &&
+                                                    data.status == 'Cancel' &&
                                                     <p className='fail'>Dibatalkan</p>
                                                 }
                                                 {
-                                                    reservationId.status == 'Confirm' || reservationId.status == 'Examination' || reservationId.status == 'Billing' || reservationId.status == 'Done' ?
+                                                    data.status == 'Confirm' || data.status == 'Examination' || data.status == 'Billing' || data.status == 'Done' ?
                                                         <p className='success'>Dikonfirmasi</p>
                                                         :
                                                         null
@@ -1171,7 +1195,7 @@ const Forms = () => {
                         </div>
                         <div className='btn-group'>
                             <button className='form-button' onClick={() => setRegConfirm(0)}>Batal</button>
-                            <button className='form-button on' onClick={() => doRegist(regAgree)}>Daftar</button>
+                            <button className='form-button on' onClick={() => doRegist()}>Daftar</button>
                         </div>
                     </div>
                 </div>
@@ -1198,14 +1222,14 @@ const Forms = () => {
                             </div>
                         </div>
                         {
-                            reservationId == null &&
+                            data == null &&
                             <div className='btn-group'>
                                 <button className='form-button' onClick={() => setModal(0)}>Batal</button>
                                 <button className='form-button on' onClick={doReservation}>Kirim</button>
                             </div>
                         }
                         {
-                            reservationId != null && reservationId.deposit_status == null &&
+                            data != null && data.deposit_status == null &&
                             <div className='btn-group'>
                                 <button className='form-button' onClick={() => setModal(0)}>Batal</button>
                                 <button className='form-button on' onClick={doDeposit}>Kirim</button>

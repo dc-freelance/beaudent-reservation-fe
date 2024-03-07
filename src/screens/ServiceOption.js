@@ -32,11 +32,10 @@ const ServiceOption = () => {
             <div className='layer'>
                 <button className='back-btn' onClick={() => fromMenu == true ? navigate('/menu', {
                     state: {
-                        reservation: data,
                         member: login,
                         creds: user
                     }
-                }) : navigate('/')}>Kembali</button>
+                }) : navigate('/reservasi')}>Kembali</button>
                 <div className='option-session'>
                     <div className='logo'>
                         <img src={require('../assets/images/logo.jpg')} draggable='false' />
@@ -47,6 +46,7 @@ const ServiceOption = () => {
                             <button onClick={() => navigate('/reservation', {
                                 state: {
                                     examination: 2,
+                                    menu: fromMenu,
                                     member: login,
                                     creds: user
                                 }
@@ -56,6 +56,7 @@ const ServiceOption = () => {
                             <button onClick={() => navigate('/reservation', {
                                 state: {
                                     examination: 1,
+                                    menu: fromMenu,
                                     member: login,
                                     creds: user
                                 }

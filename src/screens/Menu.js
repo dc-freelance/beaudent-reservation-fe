@@ -1,27 +1,42 @@
 import React, { useEffect, useState } from 'react';
 import ErrorBox from '../components/ErrorBox';
 import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Menu = () => {
     const navigate = useNavigate();
     const { state } = useLocation();
-    const [error, setError] = useState('');
     const [user, setUser] = useState('');
     const [data, setData] = useState([]);
+    const [notif, setNotif] = useState('');
 
     const checkMember = () => {
         if (state) {
-            const { creds, reservation } = state;
+            const { message, creds } = state;
+            setNotif(message);
             setUser(creds);
-            setData(reservation);
         } else {
             navigate('/credential');
         };
     };
 
+    const setUserData = async () => {
+        await axios.post(`${process.env.REACT_APP_API_URL}customer`, {
+            creds: user
+        }, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(result => {
+            setData(result.data.customer);
+        }).catch(err => { });
+    };
+
     useEffect(() => {
         checkMember();
-    }, []);
+        user != '' && setUserData();
+    }, [user]);
 
     const List = ({ data }) => {
         return (
@@ -70,7 +85,7 @@ const Menu = () => {
                     <div>
                         <button onClick={() => navigate('/reservation', {
                             state: {
-                                reservation: data,
+                                reservation: data.no,
                                 member: true,
                                 creds: user
                             }
@@ -106,17 +121,20 @@ const Menu = () => {
                     <div className='user-menu'>
                         <div className='reservation-list'>
                             {
-                                data.reservations && data.reservations.map((value, index) => {
+                                data && data.reservations ? data.reservations.map((value, index) => {
                                     return <List data={value} key={index} />
                                 })
+                                    :
+                                    <div className='reservation-skeleton'>
+                                        <div className='skeleton'></div>
+                                    </div>
                             }
                         </div>
                         <button className='reservation-box' onClick={() => navigate('/services', {
                             state: {
-                                reservation: data,
                                 menu: true,
                                 member: true,
-                                creds: data.phone_number
+                                creds: user
                             }
                         })}>
                             <div>
@@ -131,9 +149,9 @@ const Menu = () => {
             </div>
             <div className='error-container'>
                 {
-                    error &&
-                    <button className='remove-error-button' onClick={() => setError('')}>
-                        <ErrorBox message={error} />
+                    notif &&
+                    <button className='remove-error-button' onClick={() => setNotif('')}>
+                        <ErrorBox message={notif} />
                     </button>
                 }
             </div>

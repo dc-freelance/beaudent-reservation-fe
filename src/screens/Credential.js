@@ -28,11 +28,9 @@ const Credential = () => {
                 setError(result.data.error.creds);
             } else {
                 if (result.data.customer) {
-                    console.log(result.data.customer);
                     if (result.data.customer.reservations[0]) {
                         navigate('/menu', {
                             state: {
-                                reservation: result.data.customer,
                                 member: true,
                                 creds: result.data.customer.phone_number
                             }
@@ -56,6 +54,33 @@ const Credential = () => {
         });
     };
 
+    const checkRes = async (noRes) => {
+        setLoading(1);
+        await axios.get(`${process.env.REACT_APP_API_URL}search-res/${noRes}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(result => {
+            setLoading(0);
+            if (result.data.reservation) {
+                navigate('/reservation', {
+                    state: {
+                        reservation: noRes,
+                        member: true,
+                        creds: result.data.reservation.customers.phone_number
+                    }
+                });
+            } else {
+                setError('Reservasi Tidak Valid');
+            };
+        }).catch(err => {
+            console.log(err);
+            setLoading(0);
+            setError('Terjadi Masalah Saat Mengirim Data');
+        });
+    };
+
     const isBase64 = (str) => {
         if (str === '' || str.trim() === '') {
             return false;
@@ -69,7 +94,8 @@ const Credential = () => {
     };
 
     useEffect(() => {
-        searchCreds.get('creds') && login(isBase64(searchCreds.get('creds')) === true ? atob(searchCreds.get('creds')) : searchCreds.get('creds'));
+        // searchCreds.get('creds') && login(isBase64(searchCreds.get('creds')) === true ? atob(searchCreds.get('creds')) : searchCreds.get('creds'));
+        searchCreds.get('no') && checkRes(isBase64(searchCreds.get('no')) === true ? atob(searchCreds.get('no')) : searchCreds.get('no'));
     }, []);
 
     return (

@@ -649,6 +649,26 @@ button.reservation-box {
     }
 }
 
+.reservation-skeleton {
+    width: 500px;
+    height: 100px;
+}
+
+.skeleton {
+    width: 100%;
+    height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgb(240, 240, 240);
+    animation: fade .5s linear alternate infinite;
+}
+
+@keyframes fade {
+    to {
+        background: rgb(250, 250, 250);
+    }
+}
+
 
 /* End of Third Type Screen (Reservation) */
 
@@ -705,7 +725,8 @@ button.reservation-box {
         font-size: 14px !important;
     }
 
-    .reservation-box {
+    .reservation-box,
+    .reservation-skeleton {
         width: 70vw;
     }
 }
@@ -728,7 +749,8 @@ button.reservation-box {
 
     .user-menu,
     .reservation-list,
-    .reservation-box {
+    .reservation-box,
+    .reservation-skeleton {
         width: 100%;
     }
 
