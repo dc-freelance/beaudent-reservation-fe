@@ -470,6 +470,8 @@ button {
 
 input[type='file'] {
     position: relative;
+    padding-left: 0 !important;
+    border: none !important;
     color: rgb(250, 250, 250) !important;
     cursor: pointer;
 }
@@ -480,19 +482,29 @@ input[type='file']::-webkit-file-upload-button {
     border: none;
     padding: 8px 32px;
     box-shadow: 3px 3px 15px rgba(0, 0, 0, .07);
+    border-radius: 3px;
     cursor: pointer;
     font-size: 13px;
     color: rgb(255, 255, 255);
 }
 
+input[type='file'].uploaded::-webkit-file-upload-button {
+    background: rgb(50, 225, 100) !important;
+    color: rgb(50, 225, 100) !important;
+}
+
 input[type='file']~label {
     position: absolute;
     top: 42px;
-    left: 2px;
-    width: 150px;
+    left: 0;
+    width: 135px;
     text-align: center;
     font-size: 12px;
     pointer-events: none;
+}
+
+input[type='file'].uploaded~label {
+    color: rgb(255, 255, 255) !important;
 }
 
 .status-group {

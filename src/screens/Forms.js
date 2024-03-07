@@ -468,6 +468,13 @@ const Forms = () => {
                 end_h: response.data.end_h,
                 end_m: response.data.end_m
             });
+
+            if (reservationId == null) {
+                setReservation({
+                    ...reservation,
+                    request_time: response.data.start_h + ':' + response.data.start_m
+                });
+            };
         } catch (error) {
             console.error(error);
         }
