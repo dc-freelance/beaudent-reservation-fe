@@ -33,7 +33,7 @@ const Forms = () => {
             setLogin(member);
             setUser(creds);
         } else {
-            navigate('/');
+            navigate('/reservasi');
         };
     };
 
@@ -258,7 +258,7 @@ const Forms = () => {
                     setErrors(result.data.error);
                     setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
                 } else {
-                    navigate('/', {
+                    navigate('/reservasi', {
                         state: {
                             message: 'Anda Telah Melakukan Reservasi'
                         }
@@ -306,7 +306,7 @@ const Forms = () => {
                     setErrors(result.data.error);
                     setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
                 } else {
-                    navigate('/', {
+                    navigate('/reservasi', {
                         state: {
                             message: 'Anda Telah Membayar Deposit'
                         }

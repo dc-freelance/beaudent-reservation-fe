@@ -26,7 +26,7 @@ const ServiceOption = () => {
             <div className='semantic-bg top'></div>
             <div className='semantic-bg bottom'></div>
             <div className='layer'>
-                <button className='back-btn' onClick={() => navigate('/')}>Kembali</button>
+                <button className='back-btn' onClick={() => navigate('/reservasi')}>Kembali</button>
                 <div className='option-session'>
                     <div className='logo'>
                         <img src={require('../assets/images/logo.jpg')} draggable='false' />
