@@ -87,7 +87,7 @@ const InputGroup = (props) => {
                         type={props.type}
                         accept='image/jpeg, image/png'
                         placeholder={props.placeholder}
-                        className={props.label == 'Bukti Terunggah' || props.label == 'Lihat Bukti' && 'uploaded'}
+                        className={props.label == 'Bukti Terunggah' || props.label == 'Lihat Bukti' ? 'uploaded' : null}
                         onChange={event => props.set(event.target.files[0])}
                     />
                     <label>{props.label}</label>

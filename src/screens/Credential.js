@@ -28,10 +28,11 @@ const Credential = () => {
                 setError(result.data.error.creds);
             } else {
                 if (result.data.customer) {
+                    console.log(result.data.customer);
                     if (result.data.customer.reservations[0]) {
-                        navigate('/reservation', {
+                        navigate('/menu', {
                             state: {
-                                reservation: result.data.customer.reservations[result.data.customer.reservations.length - 1],
+                                reservation: result.data.customer,
                                 member: true,
                                 creds: result.data.customer.phone_number
                             }
@@ -39,7 +40,6 @@ const Credential = () => {
                     } else {
                         navigate('/services', {
                             state: {
-                                reservation: null,
                                 member: true,
                                 creds: result.data.customer.phone_number
                             }

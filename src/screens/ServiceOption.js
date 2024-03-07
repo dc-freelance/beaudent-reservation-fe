@@ -6,14 +6,18 @@ const ServiceOption = () => {
     const navigate = useNavigate();
 
     const { state } = useLocation();
+    const [data, setData] = useState([]);
     const [login, setLogin] = useState(false);
     const [user, setUser] = useState('');
+    const [fromMenu, setFromMenu] = useState(false);
 
     const checkMember = () => {
         if (state) {
-            const { member, creds } = state;
+            const { member, creds, menu, reservation } = state;
+            reservation && setData(reservation);
             setLogin(member);
             setUser(creds);
+            setFromMenu(menu);
         };
     };
 
@@ -26,7 +30,13 @@ const ServiceOption = () => {
             <div className='semantic-bg top'></div>
             <div className='semantic-bg bottom'></div>
             <div className='layer'>
-                <button className='back-btn' onClick={() => navigate('/')}>Kembali</button>
+                <button className='back-btn' onClick={() => fromMenu == true ? navigate('/menu', {
+                    state: {
+                        reservation: data,
+                        member: login,
+                        creds: user
+                    }
+                }) : navigate('/')}>Kembali</button>
                 <div className='option-session'>
                     <div className='logo'>
                         <img src={require('../assets/images/logo.jpg')} draggable='false' />

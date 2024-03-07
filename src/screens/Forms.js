@@ -20,8 +20,9 @@ const Forms = () => {
     const [exam, setExam] = useState(0);
     const [login, setLogin] = useState(false);
     const [user, setUser] = useState('');
-    const [reservationId, setReservationId] = useState(0);
+    const [reservationId, setReservationId] = useState([]);
     const [loading, setLoading] = useState(0);
+    const [auth, setAuth] = useState([]);
 
     const checkService = () => {
         if (state) {
@@ -343,6 +344,8 @@ const Forms = () => {
                 'Content-Type': 'multipart/form-data'
             }
         }).then(result => {
+            setAuth(result.data.customer);
+
             const data = result.data.customer;
 
             let marrit = '';
@@ -375,38 +378,36 @@ const Forms = () => {
             });
 
             if (reservationId != null) {
-                const customerRes = data.reservations[data.reservations.length - 1];
-
                 let treatment_name = '';
-                if (customerRes.treatments != null) {
-                    treatment_name = customerRes.treatments.name;
+                if (reservationId.treatments != null) {
+                    treatment_name = reservationId.treatments.name;
                 };
 
                 setReservation({
                     ...reservation,
-                    branch_id: customerRes.branches.name,
-                    request_date: customerRes.request_date,
-                    request_time: customerRes.request_time,
-                    is_control: customerRes.is_control,
-                    anamnesis: customerRes.anamnesis,
+                    branch_id: reservationId.branches.name,
+                    request_date: reservationId.request_date,
+                    request_time: reservationId.request_time,
+                    is_control: reservationId.is_control,
+                    anamnesis: reservationId.anamnesis,
                     treatment_id: treatment_name,
-                    deposit: customerRes.branches.deposit_minimum && customerRes.branches.deposit_minimum.split('.')[0]
+                    deposit: reservationId.branches.deposit_minimum && reservationId.branches.deposit_minimum.split('.')[0]
                 });
 
-                if (customerRes.status != 'Waiting Deposit') {
+                if (reservationId.status != 'Waiting Deposit') {
                     setReservation({
-                        branch_id: customerRes.branches.name,
-                        treatment_id: customerRes.treatments.name,
-                        request_date: customerRes.request_date,
-                        request_time: customerRes.request_time,
-                        is_control: customerRes.is_control,
-                        anamnesis: customerRes.anamnesis,
-                        customer_bank: customerRes.customer_bank,
-                        customer_bank_account_name: customerRes.customer_bank_account_name,
-                        customer_bank_account: customerRes.customer_bank_account,
-                        deposit: customerRes.deposit,
-                        deposit_receipt: customerRes.deposit_receipt,
-                        transfer_date: customerRes.transfer_date,
+                        branch_id: reservationId.branches.name,
+                        treatment_id: reservationId.treatments.name,
+                        request_date: reservationId.request_date,
+                        request_time: reservationId.request_time,
+                        is_control: reservationId.is_control,
+                        anamnesis: reservationId.anamnesis,
+                        customer_bank: reservationId.customer_bank,
+                        customer_bank_account_name: reservationId.customer_bank_account_name,
+                        customer_bank_account: reservationId.customer_bank_account,
+                        deposit: reservationId.deposit,
+                        deposit_receipt: reservationId.deposit_receipt,
+                        transfer_date: reservationId.transfer_date,
                     });
                 };
             };
@@ -1029,7 +1030,13 @@ const Forms = () => {
                         reservationId != null && reservationId.is_control == 0 && reservationId.status == 'Waiting Deposit' &&
                         <div className='btn-group'>
                             <button className='form-button' onClick={() => {
-                                navigate('/credential')
+                                navigate('/menu', {
+                                    state: {
+                                        reservation: auth,
+                                        member: login,
+                                        creds: user
+                                    }
+                                })
                             }}>Kembali</button>
                             <button className='form-button on' onClick={(saveData)}>Bayar Deposit</button>
                         </div>
@@ -1038,7 +1045,13 @@ const Forms = () => {
                         reservationId != null && reservationId.status != 'Waiting Deposit' &&
                         <div className='btn-group'>
                             <button className='form-button' onClick={() => {
-                                navigate('/credential')
+                                navigate('/menu', {
+                                    state: {
+                                        reservation: auth,
+                                        member: login,
+                                        creds: user
+                                    }
+                                })
                             }}>Kembali</button>
                         </div>
                     }
