@@ -453,19 +453,19 @@ const Forms = () => {
 
     // Get treatments
 
-    const [treatments, setTreatments] = useState([]);
-    const getTreatments = async () => {
-        try {
-            const response = await axios.get(`${process.env.REACT_APP_API_URL}treatment`);
-            const treatmentData = response.data.treatments.map(data => ({
-                label: data.name,
-                value: data.id
-            }));
-            setTreatments(treatmentData);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    // const [treatments, setTreatments] = useState([]);
+    // const getTreatments = async () => {
+    //     try {
+    //         const response = await axios.get(`${process.env.REACT_APP_API_URL}treatment`);
+    //         const treatmentData = response.data.treatments.map(data => ({
+    //             label: data.name,
+    //             value: data.id
+    //         }));
+    //         setTreatments(treatmentData);
+    //     } catch (error) {
+    //         console.error(error);
+    //     }
+    // };
 
 
 
@@ -521,7 +521,7 @@ const Forms = () => {
         checkService();
         if (form === 4) {
             getBranches();
-            getTreatments();
+            // getTreatments();
             getShift();
             setUserData();
             if (noRes != '') {
@@ -838,14 +838,14 @@ const Forms = () => {
                                         index={reservation.branch_id[0]}
                                         set={(value) => handleInput('branch_id', value)}
                                     />
-                                    <InputGroup
+                                    {/* <InputGroup
                                         name='Layanan'
                                         type='select'
                                         placeholder='Pilih Layanan'
                                         options={treatments}
                                         index={reservation.treatment_id[0]}
                                         set={(value) => handleInput('treatment_id', value)}
-                                    />
+                                    /> */}
                                     <div className='double-input'>
                                         <InputGroup
                                             name='Waktu Kunjungan'
@@ -885,14 +885,14 @@ const Forms = () => {
                                         value={reservation.branch_id}
                                         read={true}
                                     />
-                                    <InputGroup
+                                    {/* <InputGroup
                                         name='Layanan'
                                         type='text'
                                         placeholder='Pilih Layanan'
                                         options={treatments}
                                         value={reservation.treatment_id}
                                         read={true}
-                                    />
+                                    /> */}
                                     <div className='double-input'>
                                         <InputGroup
                                             name='Waktu Kunjungan'
