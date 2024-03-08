@@ -45,16 +45,16 @@ const InputGroup = (props) => {
 
 
     // Limit Input Hours
-    const [selectedTime, setSelectedTime] = useState(new Date());
     const { startOfHour, setHours, setMinutes, parse, format } = require('date-fns');
-    const start = startOfHour(setHours(new Date(), 9));
-    const end = setMinutes(setHours(new Date(), 20), 30);
+    const start = startOfHour(setMinutes(setHours(new Date(), props.start_h), props.start_m));
+    const end = setMinutes(setHours(new Date(), props.end_h), props.end_m);
+    const [selectedTime, setSelectedTime] = useState(start);
 
 
 
     return (
         <div className='input-group'>
-            <label>{props.name}{props.mark}</label>
+            <label>{props.name}<span className='input-mark'>{props.mark}</span></label>
             {
                 props.type === 'select' &&
                 <Select
@@ -87,6 +87,7 @@ const InputGroup = (props) => {
                         type={props.type}
                         accept='image/jpeg, image/png'
                         placeholder={props.placeholder}
+                        className={props.label == 'Bukti Terunggah' || props.label == 'Lihat Bukti' ? 'uploaded' : null}
                         onChange={event => props.set(event.target.files[0])}
                     />
                     <label>{props.label}</label>
@@ -110,11 +111,16 @@ const InputGroup = (props) => {
                 </LocalizationProvider>
             }
             {
+                props.name == 'Nomor Whatsapp' &&
+                <div className='label-on-field'>+62</div>
+            }
+            {
                 props.type !== 'select' && props.type !== 'textarea' && props.type !== 'file' && props.type !== 'time' &&
                 <input
                     type={props.type}
                     placeholder={props.placeholder}
                     defaultValue={props.value}
+                    min={props.min}
                     onChange={event => props.set(event.target.value)}
                     readOnly={props.read}
                 />

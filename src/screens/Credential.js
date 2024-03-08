@@ -1,6 +1,6 @@
 import axios from 'axios';
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import ErrorBox from '../components/ErrorBox';
 
 const Credential = () => {
@@ -8,11 +8,15 @@ const Credential = () => {
     const [creds, setCreds] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(0);
+    const [searchCreds, setSearchCreds] = useSearchParams();
 
-    const login = async () => {
+    const login = async (param_creds = '') => {
         setLoading(1);
+        if (creds != '') {
+            param_creds = creds;
+        };
         await axios.post(`${process.env.REACT_APP_API_URL}customer`, {
-            creds: creds
+            creds: param_creds
         }, {
             headers: {
                 'Accept': 'application/json',
@@ -25,9 +29,8 @@ const Credential = () => {
             } else {
                 if (result.data.customer) {
                     if (result.data.customer.reservations[0]) {
-                        navigate('/reservation', {
+                        navigate('/menu', {
                             state: {
-                                reservation: result.data.customer.reservations[result.data.customer.reservations.length - 1],
                                 member: true,
                                 creds: result.data.customer.phone_number
                             }
@@ -35,7 +38,6 @@ const Credential = () => {
                     } else {
                         navigate('/services', {
                             state: {
-                                reservation: null,
                                 member: true,
                                 creds: result.data.customer.phone_number
                             }
@@ -52,12 +54,56 @@ const Credential = () => {
         });
     };
 
+    const checkRes = async (noRes) => {
+        setLoading(1);
+        await axios.get(`${process.env.REACT_APP_API_URL}search-res/${noRes}`, {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data'
+            }
+        }).then(result => {
+            setLoading(0);
+            if (result.data.reservation) {
+                navigate('/reservation', {
+                    state: {
+                        reservation: noRes,
+                        member: true,
+                        creds: result.data.reservation.customers.phone_number
+                    }
+                });
+            } else {
+                setError('Reservasi Tidak Valid');
+            };
+        }).catch(err => {
+            console.log(err);
+            setLoading(0);
+            setError('Terjadi Masalah Saat Mengirim Data');
+        });
+    };
+
+    const isBase64 = (str) => {
+        if (str === '' || str.trim() === '') {
+            return false;
+        };
+
+        try {
+            return btoa(atob(str)) == str;
+        } catch (err) {
+            return false;
+        };
+    };
+
+    useEffect(() => {
+        // searchCreds.get('creds') && login(isBase64(searchCreds.get('creds')) === true ? atob(searchCreds.get('creds')) : searchCreds.get('creds'));
+        searchCreds.get('no') && checkRes(isBase64(searchCreds.get('no')) === true ? atob(searchCreds.get('no')) : searchCreds.get('no'));
+    }, []);
+
     return (
         <div className='page'>
             <div className='semantic-bg top'></div>
             <div className='semantic-bg bottom'></div>
             <div className='layer'>
-                <button className='back-btn' onClick={() => navigate('/')}>Kembali</button>
+                <button className='back-btn' onClick={() => navigate('/reservasi')}>Kembali</button>
                 <div className='option-session'>
                     <div className='logo'>
                         <img src={require('../assets/images/logo.jpg')} draggable='false' />

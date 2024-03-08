@@ -50,6 +50,32 @@
     top: 75% !important;
     height: 100%;
     opacity: 0;
+    border: none !important;
+}
+
+.css-igs3ac {
+    border: none !important;
+}
+
+.MuiInputBase-inputAdornedEnd {
+    transform: translateY(31px) !important;
+}
+
+.label-on-field {
+    position: absolute;
+    display: flex;
+    top: 30px;
+    height: 35px;
+    width: 48px;
+    justify-content: center;
+    align-items: center;
+    background: rgb(255, 255, 255);
+    font-size: 14px;
+    color: rgb(100, 100, 100);
+}
+
+.label-on-field~input {
+    padding-left: 48px;
 }
 
 @media(max-width: 500px) {
