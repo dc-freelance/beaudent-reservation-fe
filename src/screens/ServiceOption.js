@@ -45,7 +45,7 @@ const ServiceOption = () => {
                         <div className='option-group'>
                             <button onClick={() => navigate('/reservation', {
                                 state: {
-                                    examination: 2,
+                                    examination: false,
                                     menu: fromMenu,
                                     member: login,
                                     creds: user
@@ -55,7 +55,7 @@ const ServiceOption = () => {
                             </button>
                             <button onClick={() => navigate('/reservation', {
                                 state: {
-                                    examination: 1,
+                                    examination: true,
                                     menu: fromMenu,
                                     member: login,
                                     creds: user

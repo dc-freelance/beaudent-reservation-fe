@@ -17,7 +17,7 @@ const Forms = () => {
     // Examination or Check Up
 
     const { state } = useLocation();
-    const [exam, setExam] = useState(0);
+    const [exam, setExam] = useState(true);
     const [login, setLogin] = useState(false);
     const [fromMenu, setFromMenu] = useState(false);
 
@@ -123,7 +123,7 @@ const Forms = () => {
     const [reservation, setReservation] = useState({
         res_status: '',
         branch_id: ['', ''],
-        treatment_id: ['', ''],
+        // treatment_id: ['', ''],
         request_date: '',
         request_time: '',
         anamnesis: '',
@@ -133,7 +133,7 @@ const Forms = () => {
         deposit: '',
         transfer_date: '',
         deposit_receipt: '',
-        is_control: ''
+        is_control: false
     });
 
 
@@ -227,7 +227,7 @@ const Forms = () => {
                 request_time: reservation.request_time,
                 customer_id: profile.id,
                 is_control: exam === true ? 1 : 0,
-                treatment_id: reservation.treatment_id[1],
+                // treatment_id: reservation.treatment_id[1],
                 deposit: reservation.deposit,
                 anamnesis: reservation.anamnesis,
                 deposit_receipt: reservation.deposit_receipt,
@@ -395,10 +395,10 @@ const Forms = () => {
             const result_data = result.data.reservation;
             setData(result_data);
 
-            let treatment_name = '';
-            if (result_data.treatments != null) {
-                treatment_name = result_data.treatments.name;
-            };
+            // let treatment_name = '';
+            // if (result_data.treatments != null) {
+            //     treatment_name = result_data.treatments.name;
+            // };
 
             setReservation({
                 ...reservation,
@@ -407,14 +407,14 @@ const Forms = () => {
                 request_time: result_data.request_time,
                 is_control: result_data.is_control,
                 anamnesis: result_data.anamnesis,
-                treatment_id: treatment_name,
+                // treatment_id: treatment_name,
                 deposit: result_data.branches.deposit_minimum && result_data.branches.deposit_minimum.split('.')[0]
             });
 
             if (result_data.status != 'Waiting Deposit') {
                 setReservation({
                     branch_id: result_data.branches.name,
-                    treatment_id: result_data.treatments.name,
+                    // treatment_id: result_data.treatments.name,
                     request_date: result_data.request_date,
                     request_time: result_data.request_time,
                     is_control: result_data.is_control,
@@ -487,7 +487,7 @@ const Forms = () => {
                 end_m: response.data.end_m
             });
 
-            if (data == null) {
+            if (noRes == undefined) {
                 setReservation({
                     ...reservation,
                     request_time: response.data.start_h + ':' + response.data.start_m
