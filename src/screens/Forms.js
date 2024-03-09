@@ -17,29 +17,37 @@ const Forms = () => {
     // Examination or Check Up
 
     const { state } = useLocation();
-    const [exam, setExam] = useState(true);
+    const [control, setControl] = useState();
     const [login, setLogin] = useState(false);
     const [fromMenu, setFromMenu] = useState(false);
 
     const [user, setUser] = useState('');
     const [noRes, setNoRes] = useState('');
-    const [data, setData] = useState([]);
+    const [data, setData] = useState(null);
 
     const [loading, setLoading] = useState(0);
 
     const checkService = () => {
         if (state) {
-            const { menu, examination, member, creds, reservation } = state;
-            setExam(examination);
+            const { message, menu, member, creds, reservation, is_control } = state;
+
+            message && setErrors({
+                message: [message]
+            });
+
+            // Credential for form type
+
+            setFromMenu(menu);
+            setLogin(member);
             if (member === true) {
                 setForm(4);
             };
 
-            setNoRes(reservation);
+            // Credential for data
 
-            setFromMenu(menu);
-            setLogin(member);
             setUser(creds);
+            setNoRes(reservation);
+            setControl(is_control);
         } else {
             navigate('/reservasi');
         };
@@ -185,15 +193,14 @@ const Forms = () => {
                     setErrors(result.data.error);
                     setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
                 } else {
-                    const data = result.data.customer;
-
-                    setForm(4);
-                    setRegConfirm(0);
-
-                    setUser(data.phone_number);
-                    setLogin(true);
-                    setExam(exam);
-                    setUserData();
+                    navigate('/processing', {
+                        state: {
+                            message: 'Data Diri Anda Berhasil Terdaftar',
+                            member: true,
+                            creds: contact.phone_number,
+                            is_control: control
+                        }
+                    });
                 };
             }).catch(err => {
                 console.log(err);
@@ -226,8 +233,7 @@ const Forms = () => {
                 request_date: reservation.request_date,
                 request_time: reservation.request_time,
                 customer_id: profile.id,
-                is_control: exam === true ? 1 : 0,
-                // treatment_id: reservation.treatment_id[1],
+                is_control: control === true ? 1 : 0,
                 deposit: reservation.deposit,
                 anamnesis: reservation.anamnesis,
                 deposit_receipt: reservation.deposit_receipt,
@@ -245,30 +251,23 @@ const Forms = () => {
                     setErrors(result.data.error);
                     setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
                 } else {
-                    if (fromMenu == true) {
-                        navigate('/menu', {
-                            state: {
-                                message: 'Anda Telah Melakukan Reservasi',
-                                member: login,
-                                creds: user
-                            }
-                        });
-                    } else {
-                        navigate('/reservasi', {
-                            state: {
-                                message: 'Anda Telah Melakukan Reservasi',
-                                member: login,
-                                creds: result.data.phone
-                            }
-                        });
-                    };
+                    navigate('/processing', {
+                        state: {
+                            message: 'Anda Telah Melakukan Reservasi',
+                            reservation: result.data.reservasi.no,
+                            member: login,
+                            creds: contact.phone_number
+                        }
+                    });
                 };
             }).catch(err => {
                 console.log(err);
                 setLoading(0);
-                let error = { error: ['Terjadi Masalah Saat Mengirim Data'] };
-                setErrors({ error });
-                setTotalErrors(Object.values(error).reduce((acc, arr) => acc + arr.length, 0));
+                setErrors({
+                    error: [
+                        'Terjadi Kesalahan Saat Mengirimkan Data'
+                    ]
+                });
             })
         } else {
             setErrors({
@@ -305,9 +304,10 @@ const Forms = () => {
                     setErrors(result.data.error);
                     setTotalErrors(Object.values(result.data.error).reduce((acc, arr) => acc + arr.length, 0));
                 } else {
-                    navigate('/menu', {
+                    navigate('/processing', {
                         state: {
                             message: 'Anda Telah Membayar Deposit',
+                            reservation: noRes,
                             member: login,
                             creds: user
                         }
@@ -336,7 +336,10 @@ const Forms = () => {
     // Set user data
 
     const setUserData = async () => {
-        setLoading(1);
+        if (noRes == undefined) {
+            setLoading(1);
+        };
+
         await axios.post(`${process.env.REACT_APP_API_URL}customer`, {
             creds: user
         }, {
@@ -376,7 +379,9 @@ const Forms = () => {
                 address: result_data.address,
             });
 
-            setLoading(0);
+            if (noRes == undefined) {
+                setLoading(0);
+            };
         }).catch(err => { });
     };
 
@@ -385,7 +390,6 @@ const Forms = () => {
     // Get User Reservation
 
     const setUserRes = async () => {
-        setLoading(1);
         await axios.get(`${process.env.REACT_APP_API_URL}search-res/${noRes}`, {
             headers: {
                 'Accept': 'application/json',
@@ -394,11 +398,6 @@ const Forms = () => {
         }).then(result => {
             const result_data = result.data.reservation;
             setData(result_data);
-
-            // let treatment_name = '';
-            // if (result_data.treatments != null) {
-            //     treatment_name = result_data.treatments.name;
-            // };
 
             setReservation({
                 ...reservation,
@@ -448,24 +447,6 @@ const Forms = () => {
             console.error(error);
         }
     };
-
-
-
-    // Get treatments
-
-    // const [treatments, setTreatments] = useState([]);
-    // const getTreatments = async () => {
-    //     try {
-    //         const response = await axios.get(`${process.env.REACT_APP_API_URL}treatment`);
-    //         const treatmentData = response.data.treatments.map(data => ({
-    //             label: data.name,
-    //             value: data.id
-    //         }));
-    //         setTreatments(treatmentData);
-    //     } catch (error) {
-    //         console.error(error);
-    //     }
-    // };
 
 
 
@@ -521,10 +502,10 @@ const Forms = () => {
         checkService();
         if (form === 4) {
             getBranches();
-            // getTreatments();
             getShift();
             setUserData();
-            if (noRes != '') {
+            if (noRes != undefined) {
+                setLoading(1);
                 setUserRes();
             };
         };

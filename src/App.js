@@ -11,6 +11,7 @@ import ServiceOption from './screens/ServiceOption';
 import Credential from './screens/Credential';
 import Forms from './screens/Forms';
 import Menu from './screens/Menu';
+import Transit from './screens/Transit';
 
 const NotFound = () => {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const App = () => {
         <Route path='/credential' element={<Credential />}></Route>
         <Route path='/menu' element={<Menu />}></Route>
         <Route path='/reservation' element={<Forms />}></Route>
+        <Route path='/processing' element={<Transit />}></Route>
         <Route path='*' element={<NotFound />}></Route>
       </Routes>
     </Router>
