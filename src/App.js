@@ -12,6 +12,7 @@ import Credential from './screens/Credential';
 import Forms from './screens/Forms';
 import Menu from './screens/Menu';
 import Transit from './screens/Transit';
+import VisitStatus from './screens/VisitStatus';
 
 const NotFound = () => {
   const navigate = useNavigate();
@@ -24,7 +25,8 @@ const App = () => {
   return (
     <Router>
       <Routes>
-        <Route path='/reservasi' element={<Index />}></Route>
+        <Route path='/' element={<Index />}></Route>
+        <Route path='/reservasi' element={<VisitStatus />}></Route>
         <Route path='/services' element={<ServiceOption />}></Route>
         <Route path='/credential' element={<Credential />}></Route>
         <Route path='/menu' element={<Menu />}></Route>

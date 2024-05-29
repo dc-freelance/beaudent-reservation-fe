@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import OptionBox from '../components/OptionBox';
 import ErrorBox from '../components/ErrorBox';
 
-const Index = () => {
+const VisitStatus = () => {
     const navigate = useNavigate();
     const { state } = useLocation();
     const [notif, setNotif] = useState('');
@@ -25,18 +25,19 @@ const Index = () => {
             <div className='semantic-bg top'></div>
             <div className='semantic-bg bottom'></div>
             <div className='layer'>
+                <button className='back-btn' onClick={() => navigate('/')}>Kembali</button>
                 <div className='option-session'>
                     <div className='logo'>
                         <img src={require('../assets/images/logo.jpg')} draggable='false' />
                     </div>
                     <div className='content'>
-                        <p className='question'>Apa yang anda inginkan?</p>
+                        <p className='question'>Sudah pernah mendaftar di Beaudent?</p>
                         <div className='option-group'>
-                            <button onClick={() => navigate('/reservasi')} className='box-option-btn'>
-                                <OptionBox img={require('../assets/images/examination-images.png')} value='Pemeriksaan' alt='Pemeriksaan' />
+                            <button onClick={() => navigate('/services')} className='box-option-btn'>
+                                <OptionBox img={require('../assets/images/new-patient-images.png')} value='Belum Pernah' alt='Belum Pernah' />
                             </button>
                             <button onClick={() => navigate('/credential')} className='box-option-btn'>
-                                <OptionBox img={require('../assets/images/reservation-card.png')} value='Cek Reservasi' alt='Cek Reservasi' />
+                                <OptionBox img={require('../assets/images/member-images.png')} value='Sudah Pernah' alt='Sudah Pernah' />
                             </button>
                         </div>
                     </div>
@@ -54,4 +55,4 @@ const Index = () => {
     );
 };
 
-export default Index;
+export default VisitStatus;
